@@ -1,0 +1,147 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Starward.Features.ViewHost"
+             x:Class="Starward.Features.ViewHost.LauncherView"
+             x:DataType="local:LauncherViewModel"
+             mc:Ignorable="d">
+
+    <ScrollViewer>
+        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,360" ColumnSpacing="18">
+
+            <!-- Hero / launch card -->
+            <Border Grid.Row="0"
+                    Grid.Column="0"
+                    Classes="card"
+                    MinHeight="360"
+                    Padding="30">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
+                        <Border Width="62"
+                                Height="62"
+                                CornerRadius="14"
+                                ClipToBounds="True"
+                                VerticalAlignment="Top">
+                            <Image Source="{Binding GameIcon}" Stretch="UniformToFill" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding GameName}" Classes="h1" FontSize="26" />
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="{Binding ServerName}" Classes="secondary" />
+                                <TextBlock Text="·" Classes="tertiary" />
+                                <TextBlock Text="{Binding GameStateText}" Classes="secondary" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" VerticalAlignment="Center" Spacing="18" Margin="0,30,0,26">
+                        <Image Source="{Binding Logo}"
+                               MaxHeight="96"
+                               HorizontalAlignment="Left"
+                               Stretch="Uniform"
+                               IsVisible="{Binding Logo, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        <TextBlock Text="{Binding StatusText}"
+                                   FontSize="16"
+                                   Foreground="#E8FFFFFF" />
+                        <StackPanel Orientation="Horizontal" Spacing="26">
+                            <StackPanel Spacing="3">
+                                <TextBlock Text="Installed version" Classes="tertiary" />
+                                <TextBlock Text="{Binding LocalVersionText}" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel Spacing="3">
+                                <TextBlock Text="Latest version" Classes="tertiary" />
+                                <TextBlock Text="{Binding LatestVersionText}" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel Spacing="3">
+                                <TextBlock Text="Running time" Classes="tertiary" />
+                                <TextBlock Text="{Binding RunningTime, FallbackValue='—'}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Spacing="14">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button Classes="cta"
+                                    MinWidth="180"
+                                    Height="44"
+                                    Command="{Binding PrimaryActionCommand}"
+                                    Content="{Binding PrimaryActionText}" />
+                            <Button Classes="primary"
+                                    Height="44"
+                                    Command="{Binding LocateGameCommand}"
+                                    Content="Locate folder" />
+                            <Button Classes="ghost"
+                                    Height="44"
+                                    Command="{Binding OpenFolderCommand}"
+                                    Content="Open folder"
+                                    IsEnabled="{Binding IsInstalled}" />
+                            <Button Classes="ghost"
+                                    Height="44"
+                                    Command="{Binding RefreshCommand}"
+                                    Content="Refresh" />
+                            <Button Classes="ghost"
+                                    Height="44"
+                                    Command="{Binding AutoDetectCommand}"
+                                    Content="Auto-detect" />
+                        </StackPanel>
+                        <Border IsVisible="{Binding HasError}"
+                                Background="#33EB5757"
+                                CornerRadius="8"
+                                Padding="12,9">
+                            <TextBlock Text="{Binding Error}" Foreground="#FFD8D8" FontSize="13" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Details -->
+            <StackPanel Grid.Row="0" Grid.Column="1" Spacing="16">
+                <Border Classes="card">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="Installation" Classes="section" Margin="0" />
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Game folder" Classes="tertiary" />
+                            <TextBlock Text="{Binding InstallPath, TargetNullValue='Not configured'}"
+                                       Classes="secondary"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Compatibility layer" Classes="tertiary" />
+                            <TextBlock Text="{Binding CompatLayerText}" Classes="secondary" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Wine prefix" Classes="tertiary" />
+                            <TextBlock Text="{Binding PrefixPath}"
+                                       Classes="secondary"
+                                       TextWrapping="Wrap"
+                                       IsVisible="{Binding PrefixPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Linux notes" Classes="section" Margin="0" />
+                        <TextBlock Classes="secondary"
+                                   Text="Games run through the Wine/Proton layer selected in Settings → Linux compatibility. Each game can use its own prefix, and Proton prefixes live next to the Steam compatibility data path you configure." />
+                        <Button Classes="ghost"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ShowUpdateInfoCommand}"
+                                Content="About game updates" />
+                    </StackPanel>
+                </Border>
+
+                <Border Classes="card" IsVisible="{Binding IsUpdateAvailable}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Update available" FontWeight="SemiBold" Foreground="{StaticResource WarningBrush}" />
+                        <TextBlock Classes="secondary"
+                                   Text="The local game files are older than the latest official version. Use HoYoPlay, your Wine prefix tools, or download the update with the official launcher." />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

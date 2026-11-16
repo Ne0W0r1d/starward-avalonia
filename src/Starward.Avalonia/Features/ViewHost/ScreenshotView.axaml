@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:Starward.Features.ViewHost"
+             xmlns:shot="using:Starward.Features.Screenshot"
+             x:Class="Starward.Features.ViewHost.ScreenshotView"
+             x:DataType="local:ScreenshotViewModel"
+             mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Border Grid.Row="0" Classes="card" Padding="18,14">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <TextBlock Text="Screenshots" Classes="h2" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding StatusText}" Classes="tertiary" VerticalAlignment="Center" />
+                    <ProgressBar IsIndeterminate="True"
+                                 Width="80"
+                                 IsVisible="{Binding IsBusy}"
+                                 VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                    <Button Classes="cta" Command="{Binding RefreshCommand}" Content="Refresh" />
+                    <Button Command="{Binding OpenFolderCommand}" Content="Open folder" />
+                    <Button Command="{Binding SetExternalFolderCommand}" Content="Add folder" />
+                    <Button Classes="ghost" Command="{Binding ClearExternalFolderCommand}" Content="Clear extra folder" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Background="#33EB5757"
+                CornerRadius="8"
+                Padding="12,9"
+                Margin="0,12,0,0">
+            <TextBlock Text="{Binding Error}" Foreground="#FFD8D8" FontSize="13" />
+        </Border>
+
+        <Grid Grid.Row="2" ColumnDefinitions="360,*" ColumnSpacing="18" Margin="0,16,0,0">
+            <Border Grid.Column="0" Classes="card" Padding="8">
+                <ListBox ItemsSource="{Binding Screenshots}"
+                         SelectedItem="{Binding SelectedScreenshot, Mode=TwoWay}"
+                         Background="Transparent"
+                         BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="shot:ScreenshotItem">
+                            <Grid ColumnDefinitions="*,Auto" Margin="4,6">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding FileInfo}" Classes="tertiary" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding TimeMonthDay}"
+                                           Classes="tertiary"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border Grid.Column="1" Classes="card" Padding="10">
+                <Grid>
+                    <Image Source="{Binding Preview}"
+                           Stretch="Uniform"
+                           RenderOptions.BitmapInterpolationMode="HighQuality" />
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="8"
+                                IsVisible="{Binding Preview, Converter={x:Static ObjectConverters.IsNull}}">
+                        <TextBlock Text="No screenshot selected"
+                                   Classes="h2"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Choose a game and refresh, or add a screenshot folder."
+                                   Classes="tertiary"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                    <Button Classes="cta"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Margin="12"
+                            Command="{Binding OpenSelectedCommand}"
+                            Content="Open image"
+                            IsVisible="{Binding Preview, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

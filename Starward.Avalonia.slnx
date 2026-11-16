@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="docs/Avalonia.md" />
+  </Folder>
+  <Project Path="src/Starward.Core/Starward.Core.csproj" />
+  <Project Path="src/Starward.Language/Starward.Language.csproj" />
+  <Project Path="src/Starward.Avalonia/Starward.Avalonia.csproj" />
+  <Project Path="tests/Starward.Avalonia.Render/Starward.Avalonia.Render.csproj" />
+  <Project Path="tests/Starward.Avalonia.Tests/Starward.Avalonia.Tests.csproj" />
+</Solution>

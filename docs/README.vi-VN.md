@@ -1,76 +1,57 @@
-# Starward
+[English](../README.md) | [简体中文](./README.zh-CN.md) | **Tiếng Việt** | [日本語](./README.ja-JP.md) | [ภาษาไทย](./README.th-TH.md) | [Русский](./README.ru-RU.md)
 
-> **Starward** xuất phát từ khẩu hiệu của Star Rail: May This Journey Lead Us **Starward**, rất phù hợp để dùng làm tên ứng dụng.
-> Starward là một trình khởi chạy mã nguồn mở của bên thứ ba được phát triển để giải quyết những thiếu sót của HoYoPlay (miHoYo Launcher). Nó hỗ trợ tất cả các trò chơi trên PC của HoYoverse và nhằm mục đích thay thế hoàn toàn trình khởi chạy chính thức. Ngoài những chức năng cơ bản của trình khởi chạy chính thức, tôi cũng sẽ tích hợp thêm một số tính năng dựa trên nhu cầu cá nhân, chẳng hạn như:
 
--  Ghi lại thời gian chơi
--  Chuyển đổi tài khoản trò chơi
--  Xem ảnh chụp màn hình trò chơi
--  Lưu lịch sử gacha
+# Starward-Avalonia
 
-Còn nhiều tính năng khác để chờ bạn khám phá...
+> **Starward** bắt nguồn từ khẩu hiệu của Star Rail: May This Journey Lead Us **Starward** (Chuyến đi này sẽ đưa chúng ta tới những vì sao), rất phù hợp để đặt làm tên ứng dụng.
+
+
+> [!WARNING]
+> Dự án này là bản fork hạ nguồn của Starward, sẽ được chuyển sang Avalonia và phục vụ người dùng Linux.
+
+
+Starward-Avalonia là một trình khởi chạy bên thứ ba mã nguồn mở, được phát triển nhằm khắc phục những hạn chế của HoYoPlay (trình khởi chạy miHoYo). Ứng dụng hỗ trợ toàn bộ game PC của HoYoverse và hướng tới việc thay thế hoàn toàn trình khởi chạy chính thức trên PC Linux và Steam Deck. Ngoài các chức năng cơ bản của một trình khởi chạy, tôi còn bổ sung một số tính năng theo nhu cầu cá nhân, chẳng hạn như:
+
+- Ghi lại thời gian chơi game
+- Chuyển đổi tài khoản game
+- Xem ảnh chụp màn hình trong game
+- Lưu lịch sử gacha
+
+Còn nhiều tính năng khác đang chờ bạn khám phá...
+
 
 ## Cài đặt
 
-Đầu tiên, thiết bị của bạn cần đáp ứng những điều kiện sau:
+Trước tiên, thiết bị của bạn cần đáp ứng các yêu cầu sau:
 
--  Phiên bản Windows 10 1809 (17763) trở về sau.
--  Đã cài đặt [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2).
--  Đã cài đặt [WebP Image Extension](https://apps.microsoft.com/detail/9pg2dk419drg)
--  Để có trải nghiệm tốt hơn, vui lòng bật **Hiệu ứng trong suốt** và **Hiệu ứng động** trong cài đặt hệ thống.
+- Một bản phân phối Linux có thể cài đặt .NET 10
+- Đã cài đặt WebKit2GTK
 
->[WebP Imaging Extension](https://apps.microsoft.com/detail/9pg2dk419drg) thường được tích hợp sẵn trong hệ thống của bạn. Nếu ứng dụng không hiển thị đúng hình nền, vui lòng đảm bảo rằng tiện ích này đã được cài đặt.
 
-Tiếp theo, tải xuống gói dành cho kiến ​​trúc CPU của bạn từ [GitHub Release](https://github.com/Scighost/Starward/releases). Giải nén nó, sau đó chạy `Starward.exe` và làm theo hướng dẫn.
+Tiếp theo, hãy tải gói phù hợp với kiến trúc CPU của bạn từ [GitHub Release](https://github.com/Ne0W0r1d/Starward-avalonia/releases). Giải nén, sau đó cài đặt hoặc chạy và làm theo hướng dẫn.
 
-## Dịch thuật
-
-[![de-DE translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de-DE&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/de)
-[![en-US translation](https://img.shields.io/badge/any_text-100%25-blue?logo=crowdin&label=en-US)](https://crowdin.com/project/starward)
-[![it-IT translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it-IT&style=flat&logo=crowdin&query=%24.progress.2.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/it)
-[![ja-JP translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ja-JP&style=flat&logo=crowdin&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ja)
-[![ko-KR translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ko-KR&style=flat&logo=crowdin&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ko)
-[![ru-RU translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru-RU&style=flat&logo=crowdin&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ru)
-[![th-TH translation](https://img.shields.io/badge/dynamic/json?color=blue&label=th-TH&style=flat&logo=crowdin&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/th)
-[![vi-VN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=vi-VN&style=flat&logo=crowdin&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/vi)
-[![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=flat&logo=crowdin&query=%24.progress.8.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/zh-CN)
-[![zh-TW translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-TW&style=flat&logo=crowdin&query=%24.progress.9.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/zh-TW)
-
-Starward sử dụng [Crowdin](https://crowdin.com/project/starward) cho việc dịch văn bản trong ứng dụng. Bạn có thể đóng góp bằng cách giúp chúng tôi dịch và hiệu chỉnh nội dung bằng ngôn ngữ địa phương của bạn. Chúng tôi mong muốn có thêm nhiều người tham gia cùng chúng tôi.
-
-[Hướng dẫn dịch thuật ở đây](./docs/Localization.md)
 
 ## Phát triển
 
-Để biên dịch dự án cục bộ, bạn cần cài đặt Visual Studio 2022 và chọn những workloads sau:
+Hãy cài đặt [.NET 10 SDK](https://dotnet.microsoft.com/download). Sau đó biên dịch và chạy từ thư mục gốc của kho lưu trữ:
 
--  .NET Desktop Development
--  C++ Desktop Development
--  Universal Windows Platform Development
+```bash
+dotnet build Starward.Avalonia.slnx
+dotnet run --project src/Starward.Avalonia
+```
 
-## Ủng hộ
+Để chỉnh sửa mã nguồn, bạn có thể dùng VS Code / VSCodium (cài extension C#) hoặc JetBrains Rider.
 
-Phát triển không phải là dễ dàng. Nếu bạn nghĩ Starward hữu ích, bạn có thể ủng hộ cho tôi qua https://donate.scighost.com.
 
-## Cảm ơn
+## Quyên góp
 
-<picture>
-    <source srcset="https://github.com/Scighost/Starward/assets/61003590/9d369ec3-ab7c-408f-88c2-11bfe4453208" type="image/avif" />
-    <img src="https://github.com/Scighost/Starward/assets/61003590/44552992-e2c5-451f-9c2a-73176e8e4e93" width="240px" />
-</picture>
+Phát triển phần mềm không hề dễ dàng. Nếu bạn thấy Starward hữu ích:
 
-Đầu tiên, tôi xin gửi lời cảm ơn chân thành nhất tới tất cả những người đóng góp và dịch giả của dự án này. Starward chỉ có thể trở nên tốt hơn nhờ có bạn.
+- Bạn có thể quyên góp cho dự án gốc tại https://donate.scighost.com.
+- Hoặc quyên góp token của tôi tại https://0w0.red/sponsor/.
 
-Sau đó, tôi muốn gửi lời cảm ơn đặc biệt tới [@neon-nyan](https://github.com/neon-nyan). Nguồn cảm hứng và thiết kế cho dự án này đến trực tiếp từ dự án [Collapse](https://github.com/neon-nyan/Collapse) của anh ấy. Tôi đã thu được rất nhiều kiến ​​thức từ mã nguồn của Collapse, và với những tài liệu tham khảo quý giá như vậy, quá trình phát triển của tôi đã suôn sẻ hơn rất nhiều.
 
-Tiếp theo, xin gửi lời cảm ơn sâu sắc đến nhà phát triển chính của [Snap Hutao](https://github.com/DGP-Studio/Snap.Hutao), [@Lightczx](https://github.com/Lightczx). Sự trợ giúp của anh ấy là vô giá trong quá trình phát triển Starward.
 
-Ngoài ra, cảm ơn [CloudFlare](https://www.cloudflare.com/) vì đã cung cấp dịch vụ CDN miễn phí và [SignPath Foundation](https://signpath.org/) vì đã cung cấp dịch vụ ký mã miễn phí cho các dự án mã nguồn mở.
 
-<img alt="cloudflare" height="72px" src="https://github.com/user-attachments/assets/c1fba88e-4cd1-45df-b681-bf5634215f41" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="signpath foundation" height="72px" src="https://github.com/user-attachments/assets/052c654a-13fa-4e7a-8f1d-9f57c83f438b" />
-
-Và các [thư viện bên thứ ba](./docs/ThirdParty.md) được sử dụng trong dự án này.
 
 ## Ảnh chụp màn hình
-
-<img width="1200" src="https://github.com/user-attachments/assets/513eea8a-e0bb-450b-818b-5389dc9d40e8">

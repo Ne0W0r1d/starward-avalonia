@@ -1,74 +1,57 @@
-# อะไรคือ Starward?
+[English](../README.md) | [简体中文](./README.zh-CN.md) | [Tiếng Việt](./README.vi-VN.md) | [日本語](./README.ja-JP.md) | **ภาษาไทย** | [Русский](./README.ru-RU.md)
 
-**Starward**  มาจากสโลแกนของ Star Rail: ขอให้การเดินทางครั้งนี้ พาเรามุ่งไปสู่ดวงดาว (May This Journey Lead Us **Starward**) ซึ่งเหมาะมากที่จะใช้เป็นชื่อแอพ 
-Starward เป็น launcer ที่รองรับเกมบนเดสก์ท็อปทั้งหมดของ miHoYo/HoYoverse โดยมีเป้าหมายที่จะแทนที่ launcher หลักอย่างเป็นทางการ พร้อมกับเพิ่มฟีเจอร์ใหม่ๆเข้าไปด้วย
 
-นอกจากที่จะให้ผู้ใช้ดาวน์โหลดแล้วติดตั้งเกม ก็ยังมีฟีเจอร์เพิ่มเติม ดังนี้:
+# Starward-Avalonia
 
-- นับเวลาที่เล่น
-- สลับเปลี่ยนบัญชี
-- ดูภาพหน้าจอ
-- ดูประวัติการสุ่มกาชา
-- HoYoLAB Toolbox
+> **Starward** มาจากสโลแกนของ Star Rail: May This Journey Lead Us **Starward** (ขอให้การเดินทางครั้งนี้พาเรามุ่งไปสู่ดวงดาว) ซึ่งเหมาะมากที่จะใช้เป็นชื่อแอป
 
-และมีอีกที่วางแผนไว้...
 
-> Starward จะไม่มีฟีเจอร์ที่ต้องให้ผู้พัฒนาคอยอัพเดตข้อมูลและทรัพยากรของเกม เช่นรูปของไอเทม ฯลฯ
+> [!WARNING]
+> โปรเจกต์นี้เป็น downstream fork ของ Starward ซึ่งจะพอร์ตไปยัง Avalonia และให้บริการสำหรับผู้ใช้ Linux
 
-## การดาวน์โหลด
 
-อย่างแรก อุปกรณ์ของคุณต้องตรงตามเงื่อนไขเหล่านี้:
+Starward-Avalonia เป็นตัวเปิดเกม (launcher) แบบโอเพนซอร์สจากบุคคลที่สาม พัฒนาขึ้นเพื่อแก้ไขข้อบกพร่องของ HoYoPlay (launcher ของ miHoYo) โดยรองรับเกม PC ทั้งหมดของ HoYoverse และมีเป้าหมายที่จะแทนที่ launcher อย่างเป็นทางการบน Linux PC และ Steam Deck อย่างสมบูรณ์ นอกเหนือจากฟังก์ชันพื้นฐานของ launcher แล้ว ผมยังเพิ่มฟีเจอร์บางอย่างตามความต้องการส่วนตัว เช่น:
 
-- Windows 10 1809 (17763) ขึ้นไป
-- ติดตั้ง [Visual C++ Runtime](https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist) 
-- ติดตั้ง [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2) installed
+- บันทึกเวลาการเล่นเกม
+- สลับบัญชีเกม
+- ดูภาพหน้าจอในเกม
+- บันทึกประวัติการกาชา
 
-ดาวน์โหลดแพ็คเกจสำหรับสถาปัตยกรรม CPU ที่ใช้อยู่จาก [GitHub Release](https://github.com/Scighost/Starward/releases) แตกไฟล์ แล้วรัน 'Starward.exe' แล้วทำตามที่มันบอกจนเซ็ทอัพเสร็จ
+ยังมีฟีเจอร์อื่น ๆ อีกมากให้คุณได้ลองค้นหา...
 
-Starward อาจ crash ได้บนบางอุปกรณ์ หากพบเจอปัญหานี้ให้สร้าง 'config.ini' ไฟล์ในโฟลเดอร์ 'Starward' แล้ววางข้อความต่อไปนี้ลงไป 
-ไปที่ [docs/Configuration.md](./Configuration.md) หากต้องการข้อมูลเพิ่มเติมเกี่ยวกับ 'config.ini'
 
-``` ini
-UserDataFolder=.
-```
+## การติดตั้ง
 
-## การแปลภาษา
+ก่อนอื่น อุปกรณ์ของคุณต้องมีคุณสมบัติตามข้อกำหนดต่อไปนี้:
 
-[![de-DE translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de-DE&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/de)
-[![en-US translation](https://img.shields.io/badge/any_text-100%25-blue?logo=crowdin&label=en-US)](https://crowdin.com/project/starward)
-[![it-IT translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it-IT&style=flat&logo=crowdin&query=%24.progress.2.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/it)
-[![ja-JP translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ja-JP&style=flat&logo=crowdin&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ja)
-[![ko-KR translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ko-KR&style=flat&logo=crowdin&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ko)
-[![ru-RU translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru-RU&style=flat&logo=crowdin&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ru)
-[![th-TH translation](https://img.shields.io/badge/dynamic/json?color=blue&label=th-TH&style=flat&logo=crowdin&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/th)
-[![vi-VN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=vi-VN&style=flat&logo=crowdin&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/vi)
-[![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=flat&logo=crowdin&query=%24.progress.8.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/zh-CN)
-[![zh-TW translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-TW&style=flat&logo=crowdin&query=%24.progress.9.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/zh-TW)
+- ดิสทริบิวชัน Linux ที่ติดตั้ง .NET 10 ได้
+- ติดตั้ง WebKit2GTK แล้ว
 
-Starward ใช้ [Crowdin](https://crowdin.com/project/starward) ในการแปลภาษาโดยให้ข้อความภาษาอังกฤษที่ถูกแปลด้วยเครื่องจักรเป็นภาษาต้นแบบ คุณสามารถช่วยแปลหรือตรวจสอบข้อความภาษาของคุณได้
-เรายินดีต้อนรับคนที่สนใจช่วย หากคุณต้องการเพิ่มภาษาอื่นๆ สามารถสร้าง issue เพื่อบอกพวกเราได้
+
+จากนั้นดาวน์โหลดแพ็กเกจสำหรับสถาปัตยกรรม CPU ของคุณจาก [GitHub Release](https://github.com/Ne0W0r1d/Starward-avalonia/releases) แตกไฟล์ แล้วติดตั้งหรือเรียกใช้งานตามคำแนะนำ
+
 
 ## การพัฒนา
 
-ในการคอมไพล์โปรเจกต์นี้ คุณต้องติดตั้ง Visual studio 2022 แล้วเลือก workload ต่อไปนี้ :
+ติดตั้ง [.NET 10 SDK](https://dotnet.microsoft.com/download) จากนั้นคอมไพล์และรันจากโฟลเดอร์รากของรีโพซิทอรี:
 
--  .NET Desktop Development
--  C++ Desktop Development
--  Universal Windows Platform Development
+```bash
+dotnet build Starward.Avalonia.slnx
+dotnet run --project src/Starward.Avalonia
+```
 
-## คำขอบคุณ
-
-ก่อนอื่น ขอขอบคุณคุณ [neon-nyan](https://github.com/neon-nyan) อย่างมาก โดยเฉพาะโปรเจกต์ [Collapse](https://github.com/neon-nyan/Collapse) ที่เป็นแรงบันดาลใจให้โปรเจกต์นี้
-Starward ไม่เพียงแต่จะใช้ทรัพยากรบางส่วนที่เขาสร้างแล้ว ยังนำเอาแนวการออกแบบ UI มาใช้อีกด้วย 
-ผมได้เรียนรู้เยอะมากจากโค้ดของ Collapse และได้ทำให้การพัฒนา Starwart เป็นไปได้อย่างราบรื่น
-
-นอกจากนี้ผมต้องขอบคุณ [CloudFlare](https://www.cloudflare.com/) ที่ให้บริการ CDN ฟรี และ [SignPath Foundation](https://signpath.org/) ที่ให้บริการโค้ดไซน์ฟรีสำหรับโครงการโอเพนซอร์ส
-
-<img alt="cloudflare" height="72px" src="https://github.com/user-attachments/assets/c1fba88e-4cd1-45df-b681-bf5634215f41" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="signpath foundation" height="72px" src="https://github.com/user-attachments/assets/052c654a-13fa-4e7a-8f1d-9f57c83f438b" />
-
-และ[ไลบรารีของบุคคลที่สาม](./docs/ThirdParty.md) ที่ใช้ในโครงการนี้ 
+สำหรับการแก้ไขโค้ด คุณสามารถใช้ VS Code / VSCodium (พร้อมส่วนขยาย C#) หรือ JetBrains Rider
 
 
-## Screenshot
+## การสนับสนุน
 
-<img width="1200" src="https://github.com/user-attachments/assets/d289e4e0-38b6-40f1-9554-fa8e916da6c1">
+การพัฒนาไม่ใช่เรื่องง่าย หากคุณคิดว่า Starward มีประโยชน์
+
+- คุณสามารถสนับสนุนโปรเจกต์ต้นทางได้ที่ https://donate.scighost.com
+- หรือสนับสนุน token ของผมได้ที่ https://0w0.red/sponsor/
+
+
+
+
+
+## ภาพหน้าจอ

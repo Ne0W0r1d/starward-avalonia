@@ -1,72 +1,57 @@
-# Starward って何ですか?
-
-**Starward** は、崩壊:スターレイルのスローガン「May This Journey Lead Us Starward」(この旅が私たちを星へと導くように)に由来しています。 **Starward** は、miHoYo のすべてのデスクトップ版ゲームをサポートするゲームランチャーです。このプロジェクトの目標は、公式ランチャーを完全に置き換える事と更にいくつかの拡張機能を追加する事になります。
-
-ゲームのダウンロードとインストールに加えて以下の機能が含まれます:
-
--  ゲームのプレイ時間を記録
--  ゲームアカウントの切り替え
--  ゲームのスクリーンショットを表示
--  ガチャの記録を保存
--  HoYoLAB ツールボックス
-
-さらに多くの機能の追加を計画しています...
-
-> Starward は、ガチャアイテムの画像など開発者がゲームデータやリソース関連と言った断続的に更新を必要とする物は実装しません。
-
-## ダウンロード
-
-始めに使用しているデバイスが以下の条件を満たしている必要があります:
-
-- Windows 10 1809 (17763) 以降の環境である事
-- [Visual C++ ランタイム](https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist)がインストール済みである事
-- [WebView2 ランタイム](https://developer.microsoft.com/microsoft-edge/webview2)がインストール済みである事
-- Windows 10 を使用しているユーザーは、[Segoe Fluent Icons](https://aka.ms/SegoeFluentIcons) フォントのインストールを推奨します
-
-[GitHub のリリースページ](https://github.com/Scighost/Starward/releases)から使用している CPU のアーキテクチャに対応したパッケージをダウンロードして展開を行い、`Starward.exe` のプロンプトに従って操作をしてください。
-
-一部のデバイスで `Starward.exe` を実行時にクラッシュをする問題が発生する事があります。この問題が発生した場合は、`Starward.exe` が存在するフォルダーに `config.ini` のファイルを作成して、以下を貼り付けてください。`config.ini` の詳細は、[docs/Configuration.ja-JP.md](./Configuration.ja-JP.md) を参照してください。
-
-``` ini
-UserDataFolder=.
-```
+[English](../README.md) | [简体中文](./README.zh-CN.md) | [Tiếng Việt](./README.vi-VN.md) | **日本語** | [ภาษาไทย](./README.th-TH.md) | [Русский](./README.ru-RU.md)
 
 
-## 翻訳
+# Starward-Avalonia
 
-[![de-DE translation](https://img.shields.io/badge/dynamic/json?color=blue&label=de-DE&style=flat&logo=crowdin&query=%24.progress.0.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/de)
-[![en-US translation](https://img.shields.io/badge/any_text-100%25-blue?logo=crowdin&label=en-US)](https://crowdin.com/project/starward)
-[![it-IT translation](https://img.shields.io/badge/dynamic/json?color=blue&label=it-IT&style=flat&logo=crowdin&query=%24.progress.2.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/it)
-[![ja-JP translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ja-JP&style=flat&logo=crowdin&query=%24.progress.3.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ja)
-[![ko-KR translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ko-KR&style=flat&logo=crowdin&query=%24.progress.4.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ko)
-[![ru-RU translation](https://img.shields.io/badge/dynamic/json?color=blue&label=ru-RU&style=flat&logo=crowdin&query=%24.progress.5.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/ru)
-[![th-TH translation](https://img.shields.io/badge/dynamic/json?color=blue&label=th-TH&style=flat&logo=crowdin&query=%24.progress.6.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/th)
-[![vi-VN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=vi-VN&style=flat&logo=crowdin&query=%24.progress.7.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/vi)
-[![zh-CN translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-CN&style=flat&logo=crowdin&query=%24.progress.8.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/zh-CN)
-[![zh-TW translation](https://img.shields.io/badge/dynamic/json?color=blue&label=zh-TW&style=flat&logo=crowdin&query=%24.progress.9.data.translationProgress&url=https%3A%2F%2Fbadges.awesome-crowdin.com%2Fstats-15878835-595799.json)](https://crowdin.com/project/starward/zh-TW)
+> **Starward** は『崩壊：スターレイル』のキャッチコピー「May This Journey Lead Us **Starward**（この旅が私たちを星へと導くように）」に由来しており、アプリ名としてとてもふさわしいものです。
 
-Starward はローカライズに[Crowdin](https://crowdin.com/project/starward) を使用しています。機械翻訳がされた英文を原文として提供をしています。現地語の翻訳や校正が行えますのでご参加を是非ともお待ちしています。 新しい言語を翻訳したい場合は、Issue を作成してください。
+
+> [!WARNING]
+> 本プロジェクトは Starward の下流フォークです。Avalonia へ移植し、Linux ユーザー向けに提供する予定です。
+
+
+Starward-Avalonia は、HoYoPlay（miHoYo ランチャー）の不足を補うために開発されたオープンソースのサードパーティ製ランチャーです。HoYoverse のすべての PC ゲームに対応し、Linux PC および Steam Deck で公式ランチャーを完全に置き換えることを目指しています。ランチャーの基本機能に加えて、個人のニーズに応じた追加機能も取り入れています。例えば：
+
+- プレイ時間の記録
+- ゲームアカウントの切り替え
+- ゲームのスクリーンショットの閲覧
+- ガチャ履歴の保存
+
+その他の機能はご自身でお試しください……
+
+
+## インストール
+
+まず、お使いのデバイスが以下の要件を満たしている必要があります：
+
+- .NET 10 をインストールできる Linux ディストリビューション
+- WebKit2GTK がインストールされていること
+
+
+次に、[GitHub Release](https://github.com/Ne0W0r1d/Starward-avalonia/releases) からお使いの CPU アーキテクチャ向けのパッケージをダウンロードします。解凍したら、インストールするかそのまま実行し、画面の指示に従ってください。
+
 
 ## 開発
 
-プロジェクトをローカルでコンパイルするには、Visual Studio 2022をインストールして以下のワークロードを選択する必要があります:
+[.NET 10 SDK](https://dotnet.microsoft.com/download) をインストールしてください。その後、リポジトリのルートでビルドと実行を行います：
 
--  .NET デスクトップ開発
--  C++ によるデスクトップ開発
--  ユニバーサル Windows プラットフォーム開発
+```bash
+dotnet build Starward.Avalonia.slnx
+dotnet run --project src/Starward.Avalonia
+```
 
-## 謝辞
+コードの編集には VS Code / VSCodium（C# 拡張機能）または JetBrains Rider を使用できます。
 
- まず最初に、このプロジェクトのインスパイアとなる 「Collapse」 の開発者 [neon-nyan](https://github.com/neon-nyan) 氏に感謝をします。Starward は彼が作ったリソースだけでなく、「ユーザーインターフェース」も参考にしています。  [Collapse](https://github.com/neon-nyan/Collapse) のコードから多くの事を学び、私の開発プロセスをよりスムーズにしてくれました。
 
-それから、無料の CDN を提供してくれた [CloudFlare](https://www.cloudflare.com/) と、オープンソースプロジェクト向けに無料のコード署名を提供してくれた [SignPath Foundation](https://signpath.org/) に感謝します。
+## 寄付
 
-<img alt="cloudflare" height="72px" src="https://github.com/user-attachments/assets/c1fba88e-4cd1-45df-b681-bf5634215f41" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="signpath foundation" height="72px" src="https://github.com/user-attachments/assets/052c654a-13fa-4e7a-8f1d-9f57c83f438b" />
-  
-および、本プロジェクトで使用されている[サードパーティライブラリ](./docs/ThirdParty.md)。
+開発は簡単なものではありません。Starward が役に立つと思っていただけたら：
+
+- https://donate.scighost.com でアップストリームを支援できます。
+- または https://0w0.red/sponsor/ で私のトークン利用を支援できます。
+
+
+
 
 
 ## スクリーンショット
-
-<img width="1200" src="https://github.com/user-attachments/assets/72907881-045e-4271-bf0a-b06e8b3b3fad" />
-

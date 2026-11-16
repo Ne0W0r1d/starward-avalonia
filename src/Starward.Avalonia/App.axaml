@@ -1,0 +1,37 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Starward.App"
+             RequestedThemeVariant="Dark">
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://Starward/Styles/AppStyles.axaml" />
+    </Application.Styles>
+
+    <Application.Resources>
+        <Color x:Key="AccentColor">#CBAD8E</Color>
+        <Color x:Key="AccentColorDark">#B39578</Color>
+        <Color x:Key="SystemAccentColor">#CBAD8E</Color>
+        <Color x:Key="SystemAccentColorDark1">#B39578</Color>
+        <Color x:Key="SystemAccentColorDark2">#9E8064</Color>
+        <Color x:Key="SystemAccentColorDark3">#886C52</Color>
+        <Color x:Key="SystemAccentColorLight1">#D7BF9E</Color>
+        <Color x:Key="SystemAccentColorLight2">#E2D0B0</Color>
+        <Color x:Key="SystemAccentColorLight3">#EDE1C6</Color>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+        <SolidColorBrush x:Key="AccentBrushDark" Color="{StaticResource AccentColorDark}" />
+        <SolidColorBrush x:Key="SystemAccentColorBrush" Color="{StaticResource SystemAccentColor}" />
+        <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#1B1B1F" />
+        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#D9222228" />
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#D92A2A32" />
+        <SolidColorBrush x:Key="CardHoverBrush" Color="#CC3A3A44" />
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#A8A8B3" />
+        <SolidColorBrush x:Key="TertiaryTextBrush" Color="#72727E" />
+        <SolidColorBrush x:Key="DividerBrush" Color="#26FFFFFF" />
+        <SolidColorBrush x:Key="SuccessBrush" Color="#6FCF97" />
+        <SolidColorBrush x:Key="WarningBrush" Color="#F2C94C" />
+        <SolidColorBrush x:Key="DangerBrush" Color="#EB5757" />
+        <CornerRadius x:Key="CardCornerRadius">14</CornerRadius>
+    </Application.Resources>
+
+</Application>

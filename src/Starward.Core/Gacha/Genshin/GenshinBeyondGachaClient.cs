@@ -175,11 +175,11 @@ public class GenshinBeyondGachaClient
     {
         string prefix = gameBiz.Value switch
         {
-            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => @"YuanShen_Data\webCaches",
-            GameBiz.hk4e_global => @"GenshinImpact_Data\webCaches",
+            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => CombineWindowsPath(installPath, @"YuanShen_Data\webCaches"),
+            GameBiz.hk4e_global => CombineWindowsPath(installPath, @"GenshinImpact_Data\webCaches"),
             _ => throw new ArgumentOutOfRangeException($"Unknown region {gameBiz}"),
         };
-        return Path.Join(installPath, prefix);
+        return prefix;
     }
 
 
@@ -188,8 +188,8 @@ public class GenshinBeyondGachaClient
     {
         string file = gameBiz.Value switch
         {
-            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => Path.Join(installPath, WEB_CACHE_PATH_YS_CN),
-            GameBiz.hk4e_global => Path.Join(installPath, WEB_CACHE_PATH_YS_OS),
+            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_CN),
+            GameBiz.hk4e_global => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_OS),
             _ => throw new ArgumentOutOfRangeException($"Unknown region {gameBiz}"),
         };
         DateTime lastWriteTime = DateTime.MinValue;
@@ -202,7 +202,7 @@ public class GenshinBeyondGachaClient
         {
             foreach (var item in Directory.GetDirectories(webCache))
             {
-                string target = Path.Join(item, @"Cache\Cache_Data\data_2");
+                string target = CombineWindowsPath(item, @"Cache\Cache_Data\data_2");
                 if (File.Exists(target) && File.GetLastWriteTime(target) > lastWriteTime)
                 {
                     file = target;
@@ -210,6 +210,17 @@ public class GenshinBeyondGachaClient
             }
         }
         return file;
+    }
+
+
+    private static string CombineWindowsPath(string? root, string relativePath)
+    {
+        if (string.IsNullOrWhiteSpace(root))
+        {
+            return relativePath;
+        }
+        string[] parts = relativePath.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries);
+        return Path.Combine([root, .. parts]);
     }
 
 

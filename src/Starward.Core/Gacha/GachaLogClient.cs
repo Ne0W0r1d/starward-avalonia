@@ -127,13 +127,13 @@ public abstract class GachaLogClient
     {
         string prefix = gameBiz.Value switch
         {
-            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => @"YuanShen_Data\webCaches",
-            GameBiz.hk4e_global => @"GenshinImpact_Data\webCaches",
-            GameBiz.hkrpg_cn or GameBiz.hkrpg_global or GameBiz.hkrpg_bilibili => @"StarRail_Data\webCaches",
-            GameBiz.nap_cn or GameBiz.nap_global or GameBiz.nap_bilibili => @"ZenlessZoneZero_Data\webCaches",
+            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => CombineWindowsPath(installPath, @"YuanShen_Data\webCaches"),
+            GameBiz.hk4e_global => CombineWindowsPath(installPath, @"GenshinImpact_Data\webCaches"),
+            GameBiz.hkrpg_cn or GameBiz.hkrpg_global or GameBiz.hkrpg_bilibili => CombineWindowsPath(installPath, @"StarRail_Data\webCaches"),
+            GameBiz.nap_cn or GameBiz.nap_global or GameBiz.nap_bilibili => CombineWindowsPath(installPath, @"ZenlessZoneZero_Data\webCaches"),
             _ => throw new ArgumentOutOfRangeException($"Unknown region {gameBiz}"),
         };
-        return Path.Join(installPath, prefix);
+        return prefix;
     }
 
 
@@ -142,10 +142,10 @@ public abstract class GachaLogClient
     {
         string file = gameBiz.Value switch
         {
-            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => Path.Join(installPath, WEB_CACHE_PATH_YS_CN),
-            GameBiz.hk4e_global => Path.Join(installPath, WEB_CACHE_PATH_YS_OS),
-            GameBiz.hkrpg_cn or GameBiz.hkrpg_global or GameBiz.hkrpg_bilibili => Path.Join(installPath, WEB_CACHE_SR_PATH),
-            GameBiz.nap_cn or GameBiz.nap_global or GameBiz.nap_bilibili => Path.Join(installPath, WEB_CACHE_ZZZ_PATH),
+            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_CN),
+            GameBiz.hk4e_global => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_OS),
+            GameBiz.hkrpg_cn or GameBiz.hkrpg_global or GameBiz.hkrpg_bilibili => CombineWindowsPath(installPath, WEB_CACHE_SR_PATH),
+            GameBiz.nap_cn or GameBiz.nap_global or GameBiz.nap_bilibili => CombineWindowsPath(installPath, WEB_CACHE_ZZZ_PATH),
             _ => throw new ArgumentOutOfRangeException($"Unknown region {gameBiz}"),
         };
         DateTime lastWriteTime = DateTime.MinValue;
@@ -158,7 +158,7 @@ public abstract class GachaLogClient
         {
             foreach (var item in Directory.GetDirectories(webCache))
             {
-                string target = Path.Join(item, @"Cache\Cache_Data\data_2");
+                string target = CombineWindowsPath(item, @"Cache\Cache_Data\data_2");
                 if (File.Exists(target))
                 {
                     DateTime targetLastWriteTime = File.GetLastWriteTime(target);
@@ -171,6 +171,20 @@ public abstract class GachaLogClient
             }
         }
         return file;
+    }
+
+
+    /// <summary>
+    /// 游戏文件中的相对路径由 Windows 程序写入，Path.Join 在 Linux 上不会拆分反斜杠。
+    /// </summary>
+    private static string CombineWindowsPath(string? root, string relativePath)
+    {
+        if (string.IsNullOrWhiteSpace(root))
+        {
+            return relativePath;
+        }
+        string[] parts = relativePath.Split(['\\', '/'], StringSplitOptions.RemoveEmptyEntries);
+        return Path.Combine([root, .. parts]);
     }
 
 

@@ -218,6 +218,8 @@ rcf/
 
 # Windows Store app package directories and files
 Assets/
+!src/Starward.Avalonia/Assets/
+!src/Starward.Avalonia/Assets/**
 AppPackages/
 BundleArtifacts/
 Package.StoreAssociation.xml
