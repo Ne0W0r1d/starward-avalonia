@@ -22,7 +22,9 @@ public sealed class PlayTimeSummary
 
     public string TotalText => Format(Total);
 
-    public string LastPlayedText => LastPlayed is null ? "Never played" : $"Last played {LastPlayed:yyyy-MM-dd}";
+    public string LastPlayedText => LastPlayed is null
+        ? Localization.Get("Avalonia_PlayTime_NeverPlayed")
+        : Localization.Format("Avalonia_PlayTime_LastPlayedFormat", LastPlayed);
 
     public string DisplayName => $"{GameName} · {ServerName}";
 
@@ -31,7 +33,7 @@ public sealed class PlayTimeSummary
     {
         if (time.TotalHours >= 24)
         {
-            return $"{(int)time.TotalDays}d {time.Hours:00}:{time.Minutes:00}:{time.Seconds:00}";
+            return Localization.Format("Avalonia_PlayTime_DaysFormat", (int)time.TotalDays, time.Hours, time.Minutes, time.Seconds);
         }
         return $"{(int)time.TotalHours:00}:{time.Minutes:00}:{time.Seconds:00}";
     }
@@ -73,6 +75,6 @@ public sealed class PlayTimeSession
 
     public string DurationText => PlayTimeSummary.Format(Duration);
 
-    public string StateText => Interrupted ? "Interrupted" : "Completed";
+    public string StateText => Localization.Get(Interrupted ? "Avalonia_PlayTime_Interrupted" : "Avalonia_PlayTime_Completed");
 
 }

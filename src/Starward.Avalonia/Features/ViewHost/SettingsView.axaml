@@ -4,12 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="using:Starward.Features.ViewHost"
              xmlns:compat="using:Starward.Features.Compatibility"
+             xmlns:i18n="using:Starward.I18n"
              x:Class="Starward.Features.ViewHost.SettingsView"
              x:DataType="local:SettingsViewModel"
              mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <DataTemplate x:Key="CompatLayerItemTemplate" x:DataType="compat:CompatLayer">
+            <StackPanel Spacing="1" Margin="2,3">
+                <TextBlock Text="{Binding DisplayName}" />
+                <TextBlock Classes="tertiary"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis">
+                    <Run Text="{Binding KindText}" />
+                    <Run Text=" · " />
+                    <Run Text="{Binding SourceText}" />
+                    <Run Text=" · " />
+                    <Run Text="{Binding ExecutablePath}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border Margin="24,0,24,20"
+            Background="#E61D1D24"
+            BorderBrush="#1AFFFFFF"
+            BorderThickness="1"
+            CornerRadius="14"
+            Padding="4">
     <TabControl TabStripPlacement="Left"
-                Background="#A61B1B1F"
+                Background="Transparent"
                 SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
         <TabControl.Styles>
             <Style Selector="TabItem">
@@ -21,13 +45,13 @@
         </TabControl.Styles>
 
         <!-- General -->
-        <TabItem Header="General">
+        <TabItem Header="{i18n:Tr Key=SettingPage_General}">
             <ScrollViewer>
                 <StackPanel Spacing="6" MaxWidth="780" HorizontalAlignment="Left">
-                    <TextBlock Text="General" Classes="h1" />
-                    <TextBlock Text="Language and everyday behaviour of the launcher." Classes="secondary" />
+                    <TextBlock Text="{i18n:Tr Key=SettingPage_General}" Classes="h1" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_GeneralDesc}" Classes="secondary" />
 
-                    <TextBlock Text="Language" Classes="section" />
+                    <TextBlock Text="{i18n:Tr Key=SettingPage_Language}" Classes="section" />
                     <ComboBox ItemsSource="{Binding Languages}"
                               SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
                               Width="280" />
@@ -37,29 +61,29 @@
                             Margin="0,10,0,0"
                             IsVisible="{Binding NeedsRestart}">
                         <StackPanel Orientation="Horizontal" Spacing="14">
-                            <TextBlock Text="Restart Starward to apply the language / data folder change."
+                            <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_RestartHint}"
                                        Foreground="#FFF3D2"
                                        VerticalAlignment="Center" />
                             <Button Classes="cta"
                                     Command="{Binding RestartCommand}"
-                                    Content="Restart" />
+                                    Content="{i18n:Tr Key=Common_Restart}" />
                         </StackPanel>
                     </Border>
 
-                    <TextBlock Text="Behaviour" Classes="section" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_Behaviour}" Classes="section" />
                     <CheckBox IsChecked="{Binding AutoDetectGames, Mode=TwoWay}"
-                              Content="Automatically detect installed games when opening the launcher" />
+                              Content="{i18n:Tr Key=Avalonia_Settings_AutoDetectGames}" />
                     <CheckBox IsChecked="{Binding EnablePreviewRelease, Mode=TwoWay}"
-                              Content="Receive preview release information" />
+                              Content="{i18n:Tr Key=Avalonia_Settings_PreviewRelease}" />
 
-                    <TextBlock Text="Screenshots" Classes="section" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Nav_Screenshots}" Classes="section" />
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" MaxWidth="560">
                         <TextBox Text="{Binding ScreenshotFolder, Mode=TwoWay}" />
                         <Button Grid.Column="1"
                                 Command="{Binding BrowseScreenshotFolderCommand}"
-                                Content="Browse" />
+                                Content="{i18n:Tr Key=Avalonia_Settings_Browse}" />
                     </Grid>
-                    <TextBlock Text="Starward also keeps screenshots captured through the app in a per-game subfolder here."
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_ScreenshotsDesc}"
                                Classes="tertiary" />
                     <Border IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}"
                             Background="#33EB5757"
@@ -72,82 +96,125 @@
         </TabItem>
 
         <!-- Linux compatibility -->
-        <TabItem Header="Linux compatibility">
+        <TabItem Header="{i18n:Tr Key=Avalonia_Settings_LinuxCompatibility}">
             <ScrollViewer>
                 <StackPanel Spacing="6" MaxWidth="820" HorizontalAlignment="Left">
-                    <TextBlock Text="Linux compatibility" Classes="h1" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_LinuxCompatibility}" Classes="h1" />
                     <TextBlock Classes="secondary"
-                               Text="Detect Wine and Proton installations, choose the layer used to launch each game, and set the prefix directory." />
+                               Text="{i18n:Tr Key=Avalonia_Settings_LinuxDesc}" />
 
                     <Border IsVisible="{Binding !IsLinux}"
                             Background="#1FFFFFFF"
                             CornerRadius="10"
                             Padding="16"
                             Margin="0,14,0,0">
-                        <TextBlock Text="This section is only relevant on Linux. On Windows the game is launched natively."
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_LinuxOnly}"
                                    Classes="secondary" />
                     </Border>
 
                     <StackPanel Spacing="6" IsVisible="{Binding IsLinux}">
-                        <TextBlock Text="Detected compatibility layers" Classes="section" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_GlobalCompatLayer}" Classes="section" />
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                             <ComboBox ItemsSource="{Binding CompatLayers}"
                                       SelectedItem="{Binding SelectedCompatLayer, Mode=TwoWay}"
-                                      PlaceholderText="No compatibility layer detected"
+                                      PlaceholderText="{i18n:Tr Key=Avalonia_Settings_NoLayer}"
+                                      ItemTemplate="{StaticResource CompatLayerItemTemplate}"
                                       HorizontalAlignment="Stretch">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="compat:CompatLayer">
-                                        <StackPanel Spacing="1" Margin="2,3">
-                                            <TextBlock Text="{Binding DisplayName}" />
-                                            <TextBlock Classes="tertiary">
-                                                <Run Text="{Binding KindText}" />
-                                                <Run Text=" · " />
-                                                <Run Text="{Binding SourceText}" />
-                                                <Run Text=" · " />
-                                                <Run Text="{Binding ExecutablePath}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
                             </ComboBox>
                             <Button Grid.Column="1"
                                     Command="{Binding RefreshCompatCommand}"
-                                    Content="Scan again" />
+                                    Content="{i18n:Tr Key=Avalonia_Settings_ScanAgain}" />
                         </Grid>
                         <TextBlock Text="{Binding CompatStatusText}" Classes="tertiary" />
 
-                        <TextBlock Text="Current game" Classes="section" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_GlobalLaunchOptions}" Classes="section" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_ExtraArgs}" Classes="tertiary" />
+                        <TextBox Text="{Binding CompatExtraArguments, Mode=TwoWay}"
+                                 Watermark="-dx11 / custom flags" />
+                        <CheckBox IsChecked="{Binding CompatEnableMangoHud, Mode=TwoWay}"
+                                  Content="{i18n:Tr Key=Avalonia_Settings_MangoHud}" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_MangoHudHelp}"
+                                   Classes="tertiary" />
+                        <CheckBox IsChecked="{Binding CompatEnableSdlInput, Mode=TwoWay}"
+                                  Content="{i18n:Tr Key=Avalonia_Settings_SdlInput}" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_SdlInputHelp}"
+                                   Classes="tertiary" />
+                        <CheckBox IsChecked="{Binding CompatDisableMenuBuilder, Mode=TwoWay}"
+                                  Content="{i18n:Tr Key=Avalonia_Settings_DisableMenuBuilder}" />
+
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_PerGameSettings}" Classes="section" />
                         <Border Classes="card" Padding="16">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="{Binding CurrentGameName}" FontWeight="SemiBold" />
+                            <StackPanel Spacing="14">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                                    <TextBlock Text="{Binding CurrentGameName}" FontWeight="SemiBold" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{i18n:Tr Key=Avalonia_Settings_FollowGlobalHint}"
+                                               Classes="tertiary"
+                                               TextWrapping="Wrap"
+                                               MaxWidth="420"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+
+                                <StackPanel Spacing="6">
+                                    <CheckBox IsChecked="{Binding GameCompatFollowGlobal, Mode=TwoWay}"
+                                              Content="{i18n:Tr Key=Avalonia_Settings_FollowGlobalLayer}" />
+                                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_GameCompatLayer}"
+                                               Classes="tertiary" />
+                                    <ComboBox ItemsSource="{Binding CompatLayers}"
+                                              SelectedItem="{Binding GameCompatLayer, Mode=TwoWay}"
+                                              ItemTemplate="{StaticResource CompatLayerItemTemplate}"
+                                              IsEnabled="{Binding !GameCompatFollowGlobal}"
+                                              PlaceholderText="{i18n:Tr Key=Avalonia_Settings_NoLayer}"
+                                              HorizontalAlignment="Stretch" />
+                                </StackPanel>
+
+                                <StackPanel Spacing="6">
+                                    <CheckBox IsChecked="{Binding GameArgsFollowGlobal, Mode=TwoWay}"
+                                              Content="{i18n:Tr Key=Avalonia_Settings_FollowGlobalArgs}" />
+                                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_GameArgs}"
+                                               Classes="tertiary" />
+                                    <TextBox Text="{Binding GameExtraArguments, Mode=TwoWay}"
+                                             IsEnabled="{Binding !GameArgsFollowGlobal}"
+                                             Watermark="-dx11 / custom flags" />
+                                </StackPanel>
+
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="Prefix folder" Classes="tertiary" />
+                                    <CheckBox IsChecked="{Binding GameMangoHudFollowGlobal, Mode=TwoWay}"
+                                              Content="{i18n:Tr Key=Avalonia_Settings_FollowGlobal}" />
+                                    <CheckBox IsChecked="{Binding GameMangoHudEnabled, Mode=TwoWay}"
+                                              IsEnabled="{Binding !GameMangoHudFollowGlobal}"
+                                              Content="{i18n:Tr Key=Avalonia_Settings_GameMangoHud}" />
+                                </StackPanel>
+
+                                <StackPanel Spacing="4">
+                                    <CheckBox IsChecked="{Binding GameSdlInputFollowGlobal, Mode=TwoWay}"
+                                              Content="{i18n:Tr Key=Avalonia_Settings_FollowGlobal}" />
+                                    <CheckBox IsChecked="{Binding GameSdlInputEnabled, Mode=TwoWay}"
+                                              IsEnabled="{Binding !GameSdlInputFollowGlobal}"
+                                              Content="{i18n:Tr Key=Avalonia_Settings_GameSdlInput}" />
+                                </StackPanel>
+
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_PrefixFolder}" Classes="tertiary" />
                                     <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                                         <TextBox Text="{Binding CurrentGamePrefix, Mode=OneWay}" IsReadOnly="True" />
-                                        <Button Grid.Column="1" Command="{Binding BrowseGamePrefixCommand}" Content="Browse" />
-                                        <Button Grid.Column="2" Classes="ghost" Command="{Binding ResetGamePrefixCommand}" Content="Default" />
+                                        <Button Grid.Column="1" Command="{Binding BrowseGamePrefixCommand}" Content="{i18n:Tr Key=Avalonia_Settings_Browse}" />
+                                        <Button Grid.Column="2" Classes="ghost" Command="{Binding ResetGamePrefixCommand}" Content="{i18n:Tr Key=Avalonia_Settings_Default}" />
                                     </Grid>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Text="Prefix root" Classes="section" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_PrefixRoot}" Classes="section" />
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                             <TextBox Text="{Binding WinePrefixRoot, Mode=TwoWay}" />
-                            <Button Grid.Column="1" Command="{Binding BrowsePrefixRootCommand}" Content="Browse" />
+                            <Button Grid.Column="1" Command="{Binding BrowsePrefixRootCommand}" Content="{i18n:Tr Key=Avalonia_Settings_Browse}" />
                         </Grid>
-                        <TextBlock Text="Each game uses a subfolder named after its GameBiz unless a custom prefix is selected above."
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_PrefixHelp}"
                                    Classes="tertiary" />
 
-                        <TextBlock Text="Launch options" Classes="section" />
-                        <TextBlock Text="Extra arguments passed to the game executable" Classes="tertiary" />
-                        <TextBox Text="{Binding CompatExtraArguments, Mode=TwoWay}"
-                                 Watermark="-dx11 / custom flags" />
-                        <CheckBox IsChecked="{Binding CompatDisableMenuBuilder, Mode=TwoWay}"
-                                  Content="Disable Wine menu builder (WINEDLLOVERRIDES=winemenubuilder.exe=d)" />
-
-                        <TextBlock Text="Additional scan paths" Classes="section" />
-                        <TextBlock Text="One path per line. Point to a compatibilitytools.d directory, a Proton folder, or a Wine runner with bin/wine."
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_AdditionalScanPaths}" Classes="section" />
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_ScanPathsHelp}"
                                    Classes="tertiary" />
                         <TextBox Text="{Binding CompatScanPaths, Mode=TwoWay}"
                                  AcceptsReturn="True"
@@ -155,10 +222,8 @@
                                  TextWrapping="Wrap" />
 
                         <Border Background="#1FFFFFFF" CornerRadius="10" Padding="16" Margin="0,10,0,0">
-                            <TextBlock Classes="secondary">
-                                Proton prefixes are passed through STEAM_COMPAT_DATA_PATH; Wine prefixes use WINEPREFIX.
-                                Do not point two games at the same mutable prefix unless you really intend to share it.
-                            </TextBlock>
+                            <TextBlock Classes="secondary"
+                                       Text="{i18n:Tr Key=Avalonia_Settings_PrefixNote}" />
                         </Border>
                     </StackPanel>
                 </StackPanel>
@@ -166,12 +231,12 @@
         </TabItem>
 
         <!-- Download -->
-        <TabItem Header="Download">
+        <TabItem Header="{i18n:Tr Key=SettingPage_Download}">
             <ScrollViewer>
                 <StackPanel Spacing="6" MaxWidth="760" HorizontalAlignment="Left">
-                    <TextBlock Text="Download" Classes="h1" />
-                    <TextBlock Text="Network preferences used by future download and update support." Classes="secondary" />
-                    <TextBlock Text="Speed limit (KB/s, 0 = unlimited)" Classes="section" />
+                    <TextBlock Text="{i18n:Tr Key=SettingPage_Download}" Classes="h1" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_DownloadDesc}" Classes="secondary" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_SpeedLimit}" Classes="section" />
                     <NumericUpDown Value="{Binding SpeedLimitKBPerSecond, Mode=TwoWay}"
                                    Minimum="0"
                                    Maximum="1048576"
@@ -179,33 +244,33 @@
                                    Width="260" />
                     <Border Background="#1FFFFFFF" CornerRadius="10" Padding="16" Margin="0,14,0,0">
                         <TextBlock Classes="secondary"
-                                   Text="In-place game download, verification and update are driven by the Windows RPC installer in the original project. The Avalonia build keeps the preference and version checks, but game files must currently be updated with the official launcher or your Wine prefix tooling." />
+                                   Text="{i18n:Tr Key=Avalonia_Settings_DownloadNote}" />
                     </Border>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
 
         <!-- Advanced -->
-        <TabItem Header="Advanced">
+        <TabItem Header="{i18n:Tr Key=SettingPage_Advanced}">
             <ScrollViewer>
                 <StackPanel Spacing="6" MaxWidth="780" HorizontalAlignment="Left">
-                    <TextBlock Text="Advanced" Classes="h1" />
-                    <TextBlock Text="Data, backups and diagnostics." Classes="secondary" />
+                    <TextBlock Text="{i18n:Tr Key=SettingPage_Advanced}" Classes="h1" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_AdvancedDesc}" Classes="secondary" />
 
-                    <TextBlock Text="Data folder" Classes="section" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_DataFolder}" Classes="section" />
                     <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                         <TextBox Text="{Binding DataFolder, Mode=OneWay}" IsReadOnly="True" />
-                        <Button Grid.Column="1" Command="{Binding ChangeDataFolderCommand}" Content="Change" />
-                        <Button Grid.Column="2" Command="{Binding OpenDataFolderCommand}" Content="Open" />
+                        <Button Grid.Column="1" Command="{Binding ChangeDataFolderCommand}" Content="{i18n:Tr Key=Common_Change}" />
+                        <Button Grid.Column="2" Command="{Binding OpenDataFolderCommand}" Content="{i18n:Tr Key=Common_Open}" />
                     </Grid>
-                    <TextBlock Classes="tertiary" Text="{Binding CacheFolder, StringFormat='App data: {0}'}" />
-                    <TextBlock Classes="tertiary" Text="{Binding LogFile, StringFormat='Log: {0}'}" />
+                    <TextBlock Classes="tertiary" Text="{Binding CacheFolder, StringFormat={i18n:Tr Key=Avalonia_Settings_AppDataFormat}}" />
+                    <TextBlock Classes="tertiary" Text="{Binding LogFile, StringFormat={i18n:Tr Key=Avalonia_Settings_LogFormat}}" />
 
-                    <TextBlock Text="Maintenance" Classes="section" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_Maintenance}" Classes="section" />
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button Command="{Binding BackupDatabaseCommand}" Content="Backup database" />
-                        <Button Command="{Binding OpenLogCommand}" Content="Open log" />
-                        <Button Classes="ghost" Command="{Binding ResetSettingsCommand}" Content="Reset settings" />
+                        <Button Command="{Binding BackupDatabaseCommand}" Content="{i18n:Tr Key=Avalonia_Settings_BackupDatabase}" />
+                        <Button Command="{Binding OpenLogCommand}" Content="{i18n:Tr Key=Avalonia_Settings_OpenLog}" />
+                        <Button Classes="ghost" Command="{Binding ResetSettingsCommand}" Content="{i18n:Tr Key=Avalonia_Settings_ResetSettings}" />
                     </StackPanel>
 
                     <Border IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -219,32 +284,33 @@
         </TabItem>
 
         <!-- About -->
-        <TabItem Header="About">
+        <TabItem Header="{i18n:Tr Key=SettingPage_About}">
             <ScrollViewer>
                 <StackPanel Spacing="8" MaxWidth="700" HorizontalAlignment="Left">
                     <TextBlock Text="Starward" Classes="h1" />
-                    <TextBlock Text="An open-source alternative launcher for HoYoverse PC games." Classes="secondary" />
-                    <TextBlock Text="{Binding Version, StringFormat='Avalonia port · Version {0}'}" Classes="secondary" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_AboutDesc}" Classes="secondary" />
+                    <TextBlock Text="{Binding Version, StringFormat={i18n:Tr Key=Avalonia_Settings_PortVersionFormat}}" Classes="secondary" />
                     <TextBlock Text="{Binding DotnetVersion, StringFormat='.NET {0}'}" Classes="tertiary" />
 
                     <Border Classes="card" Padding="18" Margin="0,18,0,0">
                         <StackPanel Spacing="12">
-                            <TextBlock Text="Migration status" FontWeight="SemiBold" />
+                            <TextBlock Text="{i18n:Tr Key=Avalonia_Settings_MigrationStatus}" FontWeight="SemiBold" />
                             <TextBlock Classes="secondary"
-                                       Text="The UI has been rebuilt with Avalonia. Launcher, Wine/Proton detection and launch, gacha records, screenshots and play-time tracking are ported. Windows-only features such as the RPC installer, registry account switching, gamepad emulation and HDR screenshot processing are not yet available." />
+                                       Text="{i18n:Tr Key=Avalonia_Settings_MigrationBody}" />
                         </StackPanel>
                     </Border>
 
                     <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,12,0,0">
                         <Button Command="{Binding OpenLinkCommand}"
                                 CommandParameter="https://github.com/Scighost/Starward"
-                                Content="Starward on GitHub" />
+                                Content="{i18n:Tr Key=Avalonia_Settings_StarwardGitHub}" />
                         <Button Command="{Binding OpenLinkCommand}"
                                 CommandParameter="https://docs.avaloniaui.net/docs"
-                                Content="Avalonia documentation" />
+                                Content="{i18n:Tr Key=Avalonia_Settings_AvaloniaDocs}" />
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
     </TabControl>
+    </Border>
 </UserControl>

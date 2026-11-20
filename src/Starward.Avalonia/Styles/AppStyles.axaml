@@ -40,6 +40,10 @@
         <Setter Property="Padding" Value="18" />
     </Style>
 
+    <Style Selector="Border.hero">
+        <Setter Property="Background" Value="{DynamicResource HeroBackgroundBrush}" />
+    </Style>
+
     <Style Selector="Button">
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="14,8" />
@@ -104,6 +108,125 @@
 
     <Style Selector="Button.nav.active">
         <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <Style Selector="Button.rail">
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="8,2" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.rail:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#1FFFFFFF" />
+    </Style>
+
+    <Style Selector="Button.rail.active /template/ ContentPresenter">
+        <Setter Property="Background" Value="#33CBAD8E" />
+    </Style>
+
+    <Style Selector="Button.rail.active:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#47CBAD8E" />
+    </Style>
+
+    <Style Selector="Button.railGame">
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.railGame:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#26FFFFFF" />
+    </Style>
+
+    <Style Selector="Button.overlayIcon">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="#33000000" />
+        <Setter Property="BorderBrush" Value="#33FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="18" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.overlayIcon:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#55FFFFFF" />
+    </Style>
+
+    <Style Selector="Button.gameTile">
+        <Setter Property="Width" Value="220" />
+        <Setter Property="Height" Value="92" />
+        <Setter Property="Padding" Value="14" />
+        <Setter Property="Background" Value="#59000000" />
+        <Setter Property="BorderBrush" Value="#26FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.gameTile:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#7ACBAD8E" />
+        <Setter Property="BorderBrush" Value="#CCCBAD8E" />
+    </Style>
+
+    <Style Selector="Button.gameTile.selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="#40CBAD8E" />
+        <Setter Property="BorderBrush" Value="#CCCBAD8E" />
+    </Style>
+
+    <Style Selector="Button.gameTile.selected:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#59CBAD8E" />
+        <Setter Property="BorderBrush" Value="#E6CBAD8E" />
+    </Style>
+
+    <Style Selector="Button.overlay">
+        <Setter Property="Height" Value="34" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="Background" Value="#40101014" />
+        <Setter Property="BorderBrush" Value="#26FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="17" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="#E6FFFFFF" />
+    </Style>
+
+    <Style Selector="Button.overlay:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#66FFFFFF" />
+    </Style>
+
+    <Style Selector="Button.launch">
+        <Setter Property="Height" Value="46" />
+        <Setter Property="MinWidth" Value="190" />
+        <Setter Property="Padding" Value="26,0" />
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Foreground" Value="#1B1B1F" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CornerRadius" Value="23" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.launch:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AccentBrushDark}" />
+    </Style>
+
+    <Style Selector="Border.glassCard">
+        <Setter Property="Background" Value="#CC1C1C22" />
+        <Setter Property="BorderBrush" Value="#26FFFFFF" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
     </Style>
 
     <Style Selector="ComboBox">

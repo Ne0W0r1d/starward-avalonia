@@ -22,9 +22,10 @@
         <SolidColorBrush x:Key="AccentBrushDark" Color="{StaticResource AccentColorDark}" />
         <SolidColorBrush x:Key="SystemAccentColorBrush" Color="{StaticResource SystemAccentColor}" />
         <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#1B1B1F" />
-        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#D9222228" />
-        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#D92A2A32" />
-        <SolidColorBrush x:Key="CardHoverBrush" Color="#CC3A3A44" />
+        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#B31C1C22" />
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#D922222A" />
+        <SolidColorBrush x:Key="HeroBackgroundBrush" Color="#BF202028" />
+        <SolidColorBrush x:Key="CardHoverBrush" Color="#CC34343E" />
         <SolidColorBrush x:Key="SecondaryTextBrush" Color="#A8A8B3" />
         <SolidColorBrush x:Key="TertiaryTextBrush" Color="#72727E" />
         <SolidColorBrush x:Key="DividerBrush" Color="#26FFFFFF" />

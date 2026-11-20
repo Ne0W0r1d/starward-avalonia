@@ -40,12 +40,16 @@ public static partial class AppConfig
                 var info = new CultureInfo(lang);
                 CultureInfo.CurrentUICulture = info;
                 CultureInfo.DefaultThreadCurrentUICulture = info;
+                CultureInfo.CurrentCulture = info;
+                CultureInfo.DefaultThreadCurrentCulture = info;
                 Language = lang;
             }
             else
             {
                 CultureInfo.CurrentUICulture = CultureInfo.InstalledUICulture;
                 CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InstalledUICulture;
+                CultureInfo.CurrentCulture = CultureInfo.InstalledUICulture;
+                CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InstalledUICulture;
                 Language = null;
             }
         }

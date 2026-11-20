@@ -20,6 +20,7 @@ public class GenshinGachaClient : GachaLogClient
 
     protected override string GetGachaUrlPrefix(string gachaUrl, string? lang = null)
     {
+        gachaUrl = NormalizeGachaUrl(gachaUrl);
         var match = Regex.Match(gachaUrl, @"(https://webstatic\.mihoyo\.com[!-z]+)");
         if (match.Success)
         {
@@ -57,6 +58,11 @@ public class GenshinGachaClient : GachaLogClient
                 gachaUrl = Regex.Replace(gachaUrl, @"&lang=[^&]+", $"&lang={LanguageUtil.FilterLanguage(lang)}");
             }
             return gachaUrl;
+        }
+        string? generic = GetGenericGachaUrlPrefix(gachaUrl, API_PREFIX_YS_CN, API_PREFIX_YS_OS, lang);
+        if (generic is not null)
+        {
+            return generic;
         }
         throw new ArgumentException(CoreLang.Gacha_CannotParseTheWishRecordURL);
     }

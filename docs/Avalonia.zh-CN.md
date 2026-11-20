@@ -82,9 +82,19 @@ Proton 还会收到所选构建对应的 `STEAM_COMPAT_CLIENT_INSTALL_PATH`。�
 - `WINEESYNC=1`
 - 可选的 `WINEDLLOVERRIDES=winemenubuilder.exe=d`
 - 设置页中的额外参数
+- 可选的 `MANGOHUD=1`
+- SDL 输入模式：Proton 使用 `PROTON_PREFER_SDL=1` / `PROTON_USE_SDL=1`，
+  Wine 使用 `SDL_JOYSTICK_HIDAPI=1`
 
 Proton 执行 `proton run <game.exe> [参数]`，Wine 执行
 `wine <game.exe> [参数]`。
+
+### 全局与单游戏设置
+
+兼容层、启动参数、MangoHud 和 SDL 输入都有一份全局默认值。设置页的
+**当前游戏设置** 可以为每个游戏单独覆盖这些值；勾选 **跟随全局** 后会
+继承全局选项。兼容层扫描会合并同一构建在 Steam、`compatibilitytools.d`
+和自定义路径中的重复条目。
 
 ## 验证
 
@@ -95,18 +105,20 @@ dotnet run --project tests/Starward.Avalonia.Render/Starward.Avalonia.Render.csp
 ```
 
 Render 工具支持 `Launcher`、`Gacha`、`Screenshots`、`PlayTime`、`Settings`
-和 `Settings:<页签序号>`。
+、`Settings:<页签序号>` 和 `Launcher:Selector`（打开游戏选择浮层）。
 
 ## 当前已移植
 
-- Avalonia Fluent 深色界面、游戏选择和侧边导航
+- 基于 Fluent 深色主题，贴近原版的 56px 图标导航栏、封面式启动页和游戏选择浮层
 - 配置、便携模式、SQLite v1–v21 数据库迁移
 - 游戏目录检测、本地版本和更新信息
-- Linux Wine/Proton 检测、逐游戏选择和 prefix 启动
-- 抽卡 UID、统计、增量/全量抓取、JSON 导入导出
+- Linux Wine/Proton 检测与去重、逐游戏兼容层/参数/MangoHud/SDL 设置和 prefix 启动
+- 抽卡 UID、按卡池分类的统计与稀有掉落、增量/全量抓取、JSON 导入导出
+- 自动从游戏 `webCaches` 读取抽卡链接（支持 Wine/Proton 前缀），可手动粘贴 URL 作为后备
 - 截图扫描和预览
 - 游戏时间统计和最近会话
 - 数据库备份、日志、语言选项和设置页
+- Avalonia 界面已接入共享的 `Starward.Language` 资源；英文和简体中文已完成，其他语言的新增界面文案暂回退为英文
 
 ## 尚未移植
 
@@ -119,8 +131,6 @@ Render 工具支持 `Launcher`、`Gacha`、`Screenshots`、`PlayTime`、`Setting
 - 屏幕截图、HDR/AVIF/WebP 转换和截图批处理
 - 系统托盘、URL 协议、后台服务、更新和安装流程
 - 完整抽卡卡池/明细页和 UIGF4 导入
-- Avalonia 新增界面文本的本地化（游戏名称等核心数据已本地化）
-
 在没有完成这些组件前，不应把 Avalonia 版本宣传为“完全功能一致”。
 
 ## 常见问题
@@ -133,7 +143,10 @@ Wine runner 目录加入额外扫描路径，然后点 **Scan again**。
 可能需要先完成初始化。
 
 **无法从缓存读取抽卡 URL**：至少打开一次游戏内抽卡历史页面，让 authkey
-写入缓存；仍然失败时可手动粘贴完整历史 URL。
+写入缓存，然后点击 **Read cache** 或 **Update records**。Starward 会扫描当前
+游戏的所有 `webCaches/**/Cache_Data` 数据块，包括 Wine/Proton 前缀和 Steam
+库中的安装。缓存条目过期较快，可能需要重新打开一次历史页面。仍然失败时可
+手动粘贴完整历史 URL。
 
 **Steam 中 Proton 可用，但这里不可用**：确认该 Proton 对应的 Steam 根目录
 可见，并确认 prefix 是独立的 compatdata 目录，而不是其中的 `pfx` 目录。

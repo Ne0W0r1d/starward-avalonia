@@ -4,15 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="using:Starward.Features.ViewHost"
              xmlns:shot="using:Starward.Features.Screenshot"
+             xmlns:i18n="using:Starward.I18n"
              x:Class="Starward.Features.ViewHost.ScreenshotView"
              x:DataType="local:ScreenshotViewModel"
              mc:Ignorable="d">
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Grid Margin="24,0,24,20" RowDefinitions="Auto,Auto,*">
         <Border Grid.Row="0" Classes="card" Padding="18,14">
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="Screenshots" Classes="h2" VerticalAlignment="Center" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_Nav_Screenshots}" Classes="h2" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding StatusText}" Classes="tertiary" VerticalAlignment="Center" />
                     <ProgressBar IsIndeterminate="True"
                                  Width="80"
@@ -20,10 +21,10 @@
                                  VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
-                    <Button Classes="cta" Command="{Binding RefreshCommand}" Content="Refresh" />
-                    <Button Command="{Binding OpenFolderCommand}" Content="Open folder" />
-                    <Button Command="{Binding SetExternalFolderCommand}" Content="Add folder" />
-                    <Button Classes="ghost" Command="{Binding ClearExternalFolderCommand}" Content="Clear extra folder" />
+                    <Button Classes="cta" Command="{Binding RefreshCommand}" Content="{i18n:Tr Key=Common_Refresh}" />
+                    <Button Command="{Binding OpenFolderCommand}" Content="{i18n:Tr Key=ScreenshotPage_OpenFolder}" />
+                    <Button Command="{Binding SetExternalFolderCommand}" Content="{i18n:Tr Key=Avalonia_Screenshots_AddFolder}" />
+                    <Button Classes="ghost" Command="{Binding ClearExternalFolderCommand}" Content="{i18n:Tr Key=Avalonia_Screenshots_ClearExtraFolder}" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -70,10 +71,10 @@
                                 HorizontalAlignment="Center"
                                 Spacing="8"
                                 IsVisible="{Binding Preview, Converter={x:Static ObjectConverters.IsNull}}">
-                        <TextBlock Text="No screenshot selected"
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Screenshots_NoneSelected}"
                                    Classes="h2"
                                    HorizontalAlignment="Center" />
-                        <TextBlock Text="Choose a game and refresh, or add a screenshot folder."
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Screenshots_NoneSelectedHint}"
                                    Classes="tertiary"
                                    HorizontalAlignment="Center" />
                     </StackPanel>
@@ -82,7 +83,7 @@
                             VerticalAlignment="Bottom"
                             Margin="12"
                             Command="{Binding OpenSelectedCommand}"
-                            Content="Open image"
+                            Content="{i18n:Tr Key=Avalonia_Screenshots_OpenImage}"
                             IsVisible="{Binding Preview, Converter={x:Static ObjectConverters.IsNotNull}}" />
                 </Grid>
             </Border>

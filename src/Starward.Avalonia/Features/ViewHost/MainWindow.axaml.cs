@@ -1,4 +1,7 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Starward.Features.GameLauncher;
 using System;
 using System.Diagnostics;
 
@@ -35,6 +38,25 @@ public partial class MainWindow : Window
         if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.Shutdown();
+        }
+    }
+
+
+    private void GameTile_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel
+            && sender is Button { DataContext: GameBizIcon game })
+        {
+            viewModel.SelectGameCommand.Execute(game);
+        }
+    }
+
+
+    private void GameSelectorBackground_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (ReferenceEquals(e.Source, sender) && DataContext is MainWindowViewModel viewModel)
+        {
+            viewModel.CloseGameSelectorCommand.Execute(null);
         }
     }
 

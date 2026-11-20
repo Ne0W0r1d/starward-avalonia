@@ -17,6 +17,11 @@ internal static class Program
     {
         string output = args.Length > 0 ? args[0] : Path.Combine(Path.GetTempPath(), "starward-render.png");
         string page = args.Length > 1 ? args[1] : "Launcher";
+        bool showGameSelector = page.EndsWith(":Selector", StringComparison.OrdinalIgnoreCase);
+        if (showGameSelector)
+        {
+            page = page[..page.IndexOf(':')];
+        }
         if (page.StartsWith("Settings:", StringComparison.OrdinalIgnoreCase))
         {
             page = "Settings";
@@ -38,6 +43,7 @@ internal static class Program
             vm.SettingsPage.SelectedTabIndex = tab;
         }
         vm.NavigateCommand.Execute(page);
+        vm.IsGameSelectorOpen = showGameSelector;
         for (int i = 0; i < 60; i++)
         {
             Dispatcher.UIThread.RunJobs();

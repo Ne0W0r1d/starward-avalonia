@@ -113,12 +113,59 @@ public abstract class GachaLogClient
 
     public static string? GetGachaUrlFromWebCache(GameBiz gameBiz, string? installPath = null)
     {
-        var file = GetGachaCacheFilePath(gameBiz, installPath);
-        if (File.Exists(file))
+        foreach (string file in GetGachaCacheFiles(gameBiz, installPath))
         {
-            return FindMatchStringFromFile(file, GetGachaUrlPattern(gameBiz));
+            string? url = FindGachaUrlInCacheFile(file);
+            if (!string.IsNullOrWhiteSpace(url))
+            {
+                return url;
+            }
         }
         return null;
+    }
+
+
+    /// <summary>
+    /// Returns the web cache data files of the game, newest first.
+    /// </summary>
+    public static IReadOnlyList<string> GetGachaCacheFiles(GameBiz gameBiz, string? installPath = null)
+    {
+        Dictionary<string, DateTime> files = new(StringComparer.Ordinal);
+        void AddFile(string? file)
+        {
+            if (string.IsNullOrWhiteSpace(file))
+            {
+                return;
+            }
+            try
+            {
+                if (!File.Exists(file))
+                {
+                    return;
+                }
+                DateTime time = File.GetLastWriteTime(file);
+                if (!files.TryGetValue(file, out DateTime old) || time > old)
+                {
+                    files[file] = time;
+                }
+            }
+            catch
+            {
+                // A running game may remove or replace a cache file at any time.
+            }
+        }
+
+        string webCaches = GetWebCachesFolderPath(gameBiz, installPath);
+        AddFile(CombineWindowsPath(webCaches, @"Cache\Cache_Data\data_2"));
+        AddFile(CombineWindowsPath(webCaches, @"Cache_Data\data_2"));
+        if (Directory.Exists(webCaches))
+        {
+            EnumerateCacheFiles(webCaches, 0, 6, AddFile);
+        }
+        return files.OrderByDescending(x => x.Value)
+                    .ThenBy(x => x.Key, StringComparer.Ordinal)
+                    .Select(x => x.Key)
+                    .ToList();
     }
 
 
@@ -140,37 +187,223 @@ public abstract class GachaLogClient
 
     public static string GetGachaCacheFilePath(GameBiz gameBiz, string? installPath)
     {
-        string file = gameBiz.Value switch
+        return GetGachaCacheFiles(gameBiz, installPath).FirstOrDefault()
+               ?? gameBiz.Value switch
+               {
+                   GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_CN),
+                   GameBiz.hk4e_global => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_OS),
+                   GameBiz.hkrpg_cn or GameBiz.hkrpg_global or GameBiz.hkrpg_bilibili => CombineWindowsPath(installPath, WEB_CACHE_SR_PATH),
+                   GameBiz.nap_cn or GameBiz.nap_global or GameBiz.nap_bilibili => CombineWindowsPath(installPath, WEB_CACHE_ZZZ_PATH),
+                   _ => throw new ArgumentOutOfRangeException($"Unknown region {gameBiz}"),
+               };
+    }
+
+
+    private static void EnumerateCacheFiles(string directory, int depth, int maxDepth, Action<string> addFile)
+    {
+        if (depth > maxDepth)
         {
-            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_CN),
-            GameBiz.hk4e_global => CombineWindowsPath(installPath, WEB_CACHE_PATH_YS_OS),
-            GameBiz.hkrpg_cn or GameBiz.hkrpg_global or GameBiz.hkrpg_bilibili => CombineWindowsPath(installPath, WEB_CACHE_SR_PATH),
-            GameBiz.nap_cn or GameBiz.nap_global or GameBiz.nap_bilibili => CombineWindowsPath(installPath, WEB_CACHE_ZZZ_PATH),
-            _ => throw new ArgumentOutOfRangeException($"Unknown region {gameBiz}"),
-        };
-        DateTime lastWriteTime = DateTime.MinValue;
-        if (File.Exists(file))
-        {
-            lastWriteTime = File.GetLastWriteTime(file);
+            return;
         }
-        string webCache = GetWebCachesFolderPath(gameBiz, installPath);
-        if (Directory.Exists(webCache))
+        try
         {
-            foreach (var item in Directory.GetDirectories(webCache))
+            foreach (string file in Directory.EnumerateFiles(directory))
             {
-                string target = CombineWindowsPath(item, @"Cache\Cache_Data\data_2");
-                if (File.Exists(target))
+                string name = Path.GetFileName(file);
+                if (name.StartsWith("data_", StringComparison.Ordinal)
+                    || name.EndsWith(".log", StringComparison.OrdinalIgnoreCase)
+                    || name.EndsWith(".ldb", StringComparison.OrdinalIgnoreCase)
+                    || Regex.IsMatch(name, @"_\d$"))
                 {
-                    DateTime targetLastWriteTime = File.GetLastWriteTime(target);
-                    if (targetLastWriteTime > lastWriteTime)
-                    {
-                        file = target;
-                        lastWriteTime = targetLastWriteTime;
-                    }
+                    addFile(file);
                 }
             }
         }
-        return file;
+        catch
+        {
+            return;
+        }
+        try
+        {
+            foreach (string child in Directory.EnumerateDirectories(directory))
+            {
+                string name = Path.GetFileName(child);
+                if (name.Equals("GPUCache", StringComparison.OrdinalIgnoreCase)
+                    || name.Equals("ShaderCache", StringComparison.OrdinalIgnoreCase)
+                    || name.Equals("Code Cache", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                EnumerateCacheFiles(child, depth + 1, maxDepth, addFile);
+            }
+        }
+        catch
+        {
+            // Ignore unreadable subfolders.
+        }
+    }
+
+
+    /// <summary>
+    /// Fixes URLs copied from the game cache or from the clipboard.
+    /// Some builds store base64 authkeys with unescaped '+', '/' or '=' characters.
+    /// </summary>
+    public static string NormalizeGachaUrl(string? gachaUrl)
+    {
+        if (string.IsNullOrWhiteSpace(gachaUrl))
+        {
+            return "";
+        }
+        string url = gachaUrl.Trim().Trim('\0', '"', '\'');
+        url = url.Replace("\\u0026", "&", StringComparison.OrdinalIgnoreCase);
+        int nul = url.IndexOf('\0');
+        if (nul >= 0)
+        {
+            url = url[..nul];
+        }
+        int hash = url.IndexOf('#');
+        if (hash > 0)
+        {
+            url = url[..hash];
+        }
+        Match authkey = Regex.Match(url, @"authkey=([^&]+)");
+        if (authkey.Success)
+        {
+            string value = authkey.Groups[1].Value;
+            if (!value.Contains('%') && (value.Contains('+') || value.Contains('/') || value.Contains('=')))
+            {
+                url = string.Concat(url.AsSpan(0, authkey.Groups[1].Index),
+                                    Uri.EscapeDataString(value),
+                                    url.AsSpan(authkey.Groups[1].Index + value.Length));
+            }
+        }
+        return url;
+    }
+
+
+    /// <summary>
+    /// Finds the most recent gacha URL in a Chromium web cache data file.
+    /// </summary>
+    public static string? FindGachaUrlInCacheFile(string path)
+    {
+        const long MaxCacheFileSize = 64 * 1024 * 1024;
+        try
+        {
+            using FileStream fs = new(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            if (fs.Length is <= 0 or > MaxCacheFileSize)
+            {
+                return null;
+            }
+            byte[] data = new byte[fs.Length];
+            fs.ReadExactly(data);
+            ReadOnlySpan<byte> span = data;
+            ReadOnlySpan<byte> authkey = "authkey="u8;
+            int searchEnd = span.Length;
+            while (searchEnd > 0)
+            {
+                int authkeyIndex = span[..searchEnd].LastIndexOf(authkey);
+                if (authkeyIndex < 0)
+                {
+                    break;
+                }
+                int start = span[..authkeyIndex].LastIndexOf("https://"u8);
+                if (start >= 0)
+                {
+                    int end = start;
+                    while (end < span.Length)
+                    {
+                        byte b = span[end];
+                        if (b is 0 or (byte)'"' or (byte)'\'' or (byte)'<' or (byte)'>' or (byte)'#'
+                            or (byte)'\r' or (byte)'\n' or (byte)'\t' or (byte)' ' || b < 0x20 || b == 0x7F)
+                        {
+                            break;
+                        }
+                        end++;
+                    }
+                    if (end > start)
+                    {
+                        string candidate = Encoding.UTF8.GetString(span[start..end]);
+                        if (IsGachaUrl(candidate))
+                        {
+                            return NormalizeGachaUrl(candidate);
+                        }
+                    }
+                }
+                searchEnd = authkeyIndex;
+            }
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+
+    private static bool IsGachaUrl(string url)
+    {
+        if (!url.Contains("authkey=", StringComparison.Ordinal))
+        {
+            return false;
+        }
+        return url.Contains("getGachaLog", StringComparison.OrdinalIgnoreCase)
+               || url.Contains("getLdGachaLog", StringComparison.OrdinalIgnoreCase)
+               || url.Contains("auth_appid=webview_gacha", StringComparison.OrdinalIgnoreCase)
+               || (url.Contains("gacha", StringComparison.OrdinalIgnoreCase)
+                   && url.Contains("/event/", StringComparison.OrdinalIgnoreCase));
+    }
+
+
+    protected static string? GetGenericGachaUrlPrefix(string gachaUrl, string cnApiPrefix, string osApiPrefix, string? lang)
+    {
+        string url = NormalizeGachaUrl(gachaUrl);
+        int queryIndex = url.IndexOf('?');
+        if (queryIndex < 0)
+        {
+            return null;
+        }
+        string query = url[queryIndex..];
+        if (!query.Contains("authkey=", StringComparison.Ordinal))
+        {
+            return null;
+        }
+        string gameBiz = Regex.Match(query, @"[?&]game_biz=([^&]+)").Groups[1].Value;
+        bool isGlobal = gameBiz.EndsWith("_global", StringComparison.OrdinalIgnoreCase)
+                        || gameBiz.EndsWith("_os", StringComparison.OrdinalIgnoreCase)
+                        || gameBiz.EndsWith("_asia", StringComparison.OrdinalIgnoreCase)
+                        || url.Contains("hoyoverse.com", StringComparison.OrdinalIgnoreCase)
+                        || url.Contains("webstatic-sea", StringComparison.OrdinalIgnoreCase)
+                        || url.Contains("-sg.", StringComparison.OrdinalIgnoreCase);
+        return BuildGachaUrlPrefix(isGlobal ? osApiPrefix : cnApiPrefix, query, lang);
+    }
+
+
+    protected static string BuildGachaUrlPrefix(string apiPrefix, string query, string? lang)
+    {
+        int hash = query.IndexOf('#');
+        if (hash >= 0)
+        {
+            query = query[..hash];
+        }
+        query = Regex.Replace(query, @"[?&](?:real_gacha_type|gacha_type|page|size|end_id)=\d+", "");
+        query = query.TrimStart('?', '&');
+        query = "?" + query;
+        if (!string.IsNullOrWhiteSpace(lang))
+        {
+            Match langMatch = Regex.Match(query, @"[?&]lang=[^&]+");
+            if (langMatch.Success)
+            {
+                query = string.Concat(query.AsSpan(0, langMatch.Index),
+                                      langMatch.Value[0] == '?' ? "?lang=" : "&lang=",
+                                      LanguageUtil.FilterLanguage(lang),
+                                      query.AsSpan(langMatch.Index + langMatch.Length));
+            }
+            else
+            {
+                query += $"&lang={LanguageUtil.FilterLanguage(lang)}";
+            }
+        }
+        return apiPrefix + query;
     }
 
 

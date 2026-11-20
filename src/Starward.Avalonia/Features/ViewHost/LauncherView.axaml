@@ -3,145 +3,221 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="using:Starward.Features.ViewHost"
+             xmlns:i18n="using:Starward.I18n"
              x:Class="Starward.Features.ViewHost.LauncherView"
              x:DataType="local:LauncherViewModel"
              mc:Ignorable="d">
 
-    <ScrollViewer>
-        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,360" ColumnSpacing="18">
-
-            <!-- Hero / launch card -->
-            <Border Grid.Row="0"
-                    Grid.Column="0"
-                    Classes="card"
-                    MinHeight="360"
-                    Padding="30">
-                <Grid RowDefinitions="Auto,*,Auto">
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18">
-                        <Border Width="62"
-                                Height="62"
-                                CornerRadius="14"
+    <Grid Margin="40,0,40,24">
+        <!-- Bottom-left acrylic card, in the same place as the original banner/post card. -->
+        <Border Classes="glassCard"
+                Width="380"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                ClipToBounds="True">
+            <Grid RowDefinitions="112,Auto">
+                <Border Grid.Row="0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                            <GradientStop Offset="0" Color="#804B3B35" />
+                            <GradientStop Offset="1" Color="#40202028" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <Grid Margin="18,14"
+                          ColumnDefinitions="Auto,*"
+                          ColumnSpacing="14">
+                        <Border Width="64"
+                                Height="64"
+                                CornerRadius="10"
                                 ClipToBounds="True"
-                                VerticalAlignment="Top">
+                                VerticalAlignment="Center">
                             <Image Source="{Binding GameIcon}" Stretch="UniformToFill" />
                         </Border>
-                        <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding GameName}" Classes="h1" FontSize="26" />
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock Text="{Binding ServerName}" Classes="secondary" />
-                                <TextBlock Text="·" Classes="tertiary" />
-                                <TextBlock Text="{Binding GameStateText}" Classes="secondary" />
-                            </StackPanel>
+                        <StackPanel Grid.Column="1"
+                                    Spacing="3"
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="{Binding GameName}"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="White"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding ServerName}"
+                                       FontSize="12"
+                                       Foreground="#CCFFFFFF" />
+                            <TextBlock Text="{Binding GameStateText}"
+                                       FontSize="12"
+                                       Foreground="#99FFFFFF" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <StackPanel Grid.Row="1"
+                            Margin="16"
+                            Spacing="10">
+                    <TextBlock Text="{Binding StatusText}"
+                               FontSize="14"
+                               Foreground="#E6FFFFFF"
+                               TextWrapping="Wrap" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="{i18n:Tr Key=Avalonia_Launcher_InstalledVersion}"
+                                       Classes="tertiary" />
+                            <TextBlock Text="{Binding LocalVersionText}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="{i18n:Tr Key=Avalonia_Launcher_LatestVersion}"
+                                       Classes="tertiary" />
+                            <TextBlock Text="{Binding LatestVersionText}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Spacing="2">
+                            <TextBlock Text="{i18n:Tr Key=Avalonia_Launcher_RunningTime}"
+                                       Classes="tertiary" />
+                            <TextBlock Text="{Binding RunningTime, FallbackValue='—'}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold" />
                         </StackPanel>
                     </Grid>
 
-                    <StackPanel Grid.Row="1" VerticalAlignment="Center" Spacing="18" Margin="0,30,0,26">
-                        <Image Source="{Binding Logo}"
-                               MaxHeight="96"
-                               HorizontalAlignment="Left"
-                               Stretch="Uniform"
-                               IsVisible="{Binding Logo, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                        <TextBlock Text="{Binding StatusText}"
-                                   FontSize="16"
-                                   Foreground="#E8FFFFFF" />
-                        <StackPanel Orientation="Horizontal" Spacing="26">
-                            <StackPanel Spacing="3">
-                                <TextBlock Text="Installed version" Classes="tertiary" />
-                                <TextBlock Text="{Binding LocalVersionText}" FontSize="18" FontWeight="SemiBold" />
-                            </StackPanel>
-                            <StackPanel Spacing="3">
-                                <TextBlock Text="Latest version" Classes="tertiary" />
-                                <TextBlock Text="{Binding LatestVersionText}" FontSize="18" FontWeight="SemiBold" />
-                            </StackPanel>
-                            <StackPanel Spacing="3">
-                                <TextBlock Text="Running time" Classes="tertiary" />
-                                <TextBlock Text="{Binding RunningTime, FallbackValue='—'}"
-                                           FontSize="18"
-                                           FontWeight="SemiBold" />
-                            </StackPanel>
-                        </StackPanel>
+                    <Border Height="1" Background="{DynamicResource DividerBrush}" />
+
+                    <StackPanel Spacing="3">
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Launcher_GameFolder}"
+                                   Classes="tertiary" />
+                        <TextBlock Text="{Binding InstallPath, TargetNullValue={i18n:Tr Key=Avalonia_Launcher_NotConfigured}}"
+                                   Classes="secondary"
+                                   MaxLines="2"
+                                   TextTrimming="CharacterEllipsis" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="2" Spacing="14">
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <Button Classes="cta"
-                                    MinWidth="180"
-                                    Height="44"
-                                    Command="{Binding PrimaryActionCommand}"
-                                    Content="{Binding PrimaryActionText}" />
-                            <Button Classes="primary"
-                                    Height="44"
-                                    Command="{Binding LocateGameCommand}"
-                                    Content="Locate folder" />
-                            <Button Classes="ghost"
-                                    Height="44"
-                                    Command="{Binding OpenFolderCommand}"
-                                    Content="Open folder"
-                                    IsEnabled="{Binding IsInstalled}" />
-                            <Button Classes="ghost"
-                                    Height="44"
-                                    Command="{Binding RefreshCommand}"
-                                    Content="Refresh" />
-                            <Button Classes="ghost"
-                                    Height="44"
-                                    Command="{Binding AutoDetectCommand}"
-                                    Content="Auto-detect" />
-                        </StackPanel>
-                        <Border IsVisible="{Binding HasError}"
-                                Background="#33EB5757"
-                                CornerRadius="8"
-                                Padding="12,9">
-                            <TextBlock Text="{Binding Error}" Foreground="#FFD8D8" FontSize="13" />
-                        </Border>
-                    </StackPanel>
-                </Grid>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <TextBlock Text="{i18n:Tr Key=Avalonia_Launcher_CompatibilityLayer}"
+                                   Classes="tertiary"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding CompatLayerText}"
+                                   Classes="secondary"
+                                   HorizontalAlignment="Right"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Bottom-right launch cluster, matching the original start button placement. -->
+        <StackPanel HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Spacing="10">
+            <Border IsVisible="{Binding HasError}"
+                    HorizontalAlignment="Right"
+                    MaxWidth="520"
+                    Background="#CC7A2525"
+                    BorderBrush="#66EB5757"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12,8">
+                <TextBlock Text="{Binding Error}"
+                           FontSize="12"
+                           Foreground="#FFE3E3"
+                           TextWrapping="Wrap" />
             </Border>
 
-            <!-- Details -->
-            <StackPanel Grid.Row="0" Grid.Column="1" Spacing="16">
-                <Border Classes="card">
-                    <StackPanel Spacing="14">
-                        <TextBlock Text="Installation" Classes="section" Margin="0" />
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="Game folder" Classes="tertiary" />
-                            <TextBlock Text="{Binding InstallPath, TargetNullValue='Not configured'}"
-                                       Classes="secondary"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="Compatibility layer" Classes="tertiary" />
-                            <TextBlock Text="{Binding CompatLayerText}" Classes="secondary" />
-                        </StackPanel>
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="Wine prefix" Classes="tertiary" />
-                            <TextBlock Text="{Binding PrefixPath}"
-                                       Classes="secondary"
-                                       TextWrapping="Wrap"
-                                       IsVisible="{Binding PrefixPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-
-                <Border Classes="card">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Linux notes" Classes="section" Margin="0" />
-                        <TextBlock Classes="secondary"
-                                   Text="Games run through the Wine/Proton layer selected in Settings → Linux compatibility. Each game can use its own prefix, and Proton prefixes live next to the Steam compatibility data path you configure." />
-                        <Button Classes="ghost"
-                                HorizontalAlignment="Left"
-                                Command="{Binding ShowUpdateInfoCommand}"
-                                Content="About game updates" />
-                    </StackPanel>
-                </Border>
-
-                <Border Classes="card" IsVisible="{Binding IsUpdateAvailable}">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="Update available" FontWeight="SemiBold" Foreground="{StaticResource WarningBrush}" />
-                        <TextBlock Classes="secondary"
-                                   Text="The local game files are older than the latest official version. Use HoYoPlay, your Wine prefix tools, or download the update with the official launcher." />
-                    </StackPanel>
-                </Border>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button Classes="overlay"
+                        Width="34"
+                        Padding="0"
+                        Command="{Binding LocateGameCommand}"
+                        ToolTip.Tip="{i18n:Tr Key=Avalonia_Launcher_LocateFolder}">
+                    <Path Width="17"
+                          Height="17"
+                          Stretch="Uniform"
+                          Fill="#E6FFFFFF"
+                          Data="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z" />
+                </Button>
+                <Button Classes="overlay"
+                        Width="34"
+                        Padding="0"
+                        Command="{Binding OpenFolderCommand}"
+                        IsEnabled="{Binding IsInstalled}"
+                        ToolTip.Tip="{i18n:Tr Key=ScreenshotPage_OpenFolder}">
+                    <Path Width="17"
+                          Height="17"
+                          Stretch="Uniform"
+                          Fill="#E6FFFFFF"
+                          Data="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z" />
+                </Button>
+                <Button Classes="overlay"
+                        Width="34"
+                        Padding="0"
+                        Command="{Binding RefreshCommand}"
+                        ToolTip.Tip="{i18n:Tr Key=Common_Refresh}">
+                    <Path Width="17"
+                          Height="17"
+                          Stretch="Uniform"
+                          Fill="#E6FFFFFF"
+                          Data="M17.65 6.35A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.76-4.24L13 11h8V3z" />
+                </Button>
+                <Button Classes="overlay"
+                        Width="34"
+                        Padding="0"
+                        Command="{Binding AutoDetectCommand}"
+                        ToolTip.Tip="{i18n:Tr Key=Avalonia_Launcher_AutoDetect}">
+                    <Path Width="17"
+                          Height="17"
+                          Stretch="Uniform"
+                          Fill="#E6FFFFFF"
+                          Data="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 14 14.21l.27.28v.79L20 21l1-1-5.5-6zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z" />
+                </Button>
             </StackPanel>
-        </Grid>
-    </ScrollViewer>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="14"
+                        VerticalAlignment="Center">
+                <StackPanel Spacing="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{i18n:Tr Key=LauncherPage_PlayTime}"
+                               FontSize="11"
+                               Foreground="#B3FFFFFF"
+                               HorizontalAlignment="Right" />
+                    <TextBlock Text="{Binding RunningTime, FallbackValue='—'}"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               HorizontalAlignment="Right" />
+                </StackPanel>
+
+                <Button Classes="launch"
+                        Command="{Binding PrimaryActionCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <ProgressBar IsIndeterminate="True"
+                                     Width="16"
+                                     Height="4"
+                                     IsVisible="{Binding IsBusy}"
+                                     VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding PrimaryActionText}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <Button Classes="overlayIcon"
+                        Command="{Binding ShowUpdateInfoCommand}"
+                        ToolTip.Tip="{i18n:Tr Key=Avalonia_Launcher_AboutUpdates}">
+                    <Path Width="17"
+                          Height="17"
+                          Stretch="Uniform"
+                          Fill="#E6FFFFFF"
+                          Data="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>

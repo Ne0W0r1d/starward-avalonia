@@ -1,4 +1,6 @@
-﻿namespace Starward.Language;
+﻿using System.Globalization;
+
+namespace Starward.Language;
 
 public static class Localization
 {
@@ -19,6 +21,19 @@ public static class Localization
         ("繁體中文 - 香港地區 (zh-HK)", "zh-HK"),
         ("繁體中文 - 台灣地區 (zh-TW)", "zh-TW"),
     }.AsReadOnly();
+
+
+    public static string Get(string key)
+    {
+        string? value = Lang.ResourceManager.GetString(key, CultureInfo.CurrentUICulture);
+        return string.IsNullOrEmpty(value) ? key : value;
+    }
+
+
+    public static string Format(string key, params object?[] args)
+    {
+        return string.Format(CultureInfo.CurrentCulture, Get(key), args);
+    }
 
 
 }

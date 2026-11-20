@@ -24,17 +24,24 @@ public partial class GachaViewModel : ObservableObject
 
     private readonly GachaServiceFactory _factory;
 
+    private readonly GachaCacheService _cacheService;
+
     private GameId? _gameId;
 
     private GachaLogService? _service;
 
     private CancellationTokenSource? _cts;
 
+    private int _cacheScanVersion;
 
-    public GachaViewModel(ILogger<GachaViewModel> logger, GachaServiceFactory factory)
+    private GachaCacheResult? _lastCacheResult;
+
+
+    public GachaViewModel(ILogger<GachaViewModel> logger, GachaServiceFactory factory, GachaCacheService cacheService)
     {
         _logger = logger;
         _factory = factory;
+        _cacheService = cacheService;
     }
 
 
@@ -42,13 +49,13 @@ public partial class GachaViewModel : ObservableObject
 
     public ObservableCollection<GachaTypeStats> Stats { get; } = new();
 
-    public ObservableCollection<GachaLogItemEx> RecentFiveStars { get; } = new();
+    public ObservableCollection<GachaCategoryGroup> Categories { get; } = new();
 
     [ObservableProperty]
     public partial long? SelectedUid { get; set; }
 
     [ObservableProperty]
-    public partial string Title { get; set; } = "Gacha records";
+    public partial string Title { get; set; } = Localization.Get("Avalonia_Nav_GachaRecords");
 
     [ObservableProperty]
     public partial string? ProgressText { get; set; }
@@ -63,7 +70,13 @@ public partial class GachaViewModel : ObservableObject
     public partial bool HasData { get; set; }
 
     [ObservableProperty]
-    public partial string EmptyText { get; set; } = "Import a gacha log URL to get started.";
+    public partial string EmptyText { get; set; } = Localization.Get("Avalonia_Gacha_EmptyText");
+
+    [ObservableProperty]
+    public partial string? CacheStatusText { get; set; }
+
+    [ObservableProperty]
+    public partial bool HasGameCache { get; set; }
 
 
     public bool HasError => !string.IsNullOrWhiteSpace(Error);
@@ -85,17 +98,20 @@ public partial class GachaViewModel : ObservableObject
     {
         _gameId = gameId;
         _service = _factory.GetService(gameId.GameBiz);
-        Title = _service is null ? "Gacha records" : GachaLogService.GetGachaLogText(gameId.GameBiz);
+        Title = _service is null ? Localization.Get("Avalonia_Nav_GachaRecords") : GachaLogService.GetGachaLogText(gameId.GameBiz);
         if (_service is null)
         {
             Uids.Clear();
             Stats.Clear();
-            RecentFiveStars.Clear();
+            Categories.Clear();
             HasData = false;
-            EmptyText = "Gacha records are not supported for this game.";
+            HasGameCache = false;
+            CacheStatusText = null;
+            EmptyText = Localization.Get("Avalonia_Gacha_Unsupported");
             return;
         }
         LoadUids();
+        _ = RefreshCacheStatusAsync();
     }
 
 
@@ -124,11 +140,11 @@ public partial class GachaViewModel : ObservableObject
             long last = _gameId is null ? 0 : AppConfig.GetLastUidInGachaLogPage(_gameId.GameBiz.Game);
             SelectedUid = Uids.Contains(last) ? last : Uids.FirstOrDefault();
             HasData = Uids.Count > 0;
-            EmptyText = "Import a gacha log URL to get started.";
+            EmptyText = Localization.Get("Avalonia_Gacha_EmptyText");
             if (SelectedUid is null)
             {
                 Stats.Clear();
-                RecentFiveStars.Clear();
+                Categories.Clear();
             }
         }
         catch (Exception ex)
@@ -142,30 +158,48 @@ public partial class GachaViewModel : ObservableObject
     private void LoadStats()
     {
         Stats.Clear();
-        RecentFiveStars.Clear();
+        Categories.Clear();
         if (_service is null || SelectedUid is not > 0)
         {
             return;
         }
         try
         {
-            (List<GachaTypeStats> stats, List<GachaLogItemEx> items) = _service.GetGachaTypeStats(SelectedUid.Value);
+            (List<GachaTypeStats> stats, _) = _service.GetGachaTypeStats(SelectedUid.Value);
             foreach (GachaTypeStats item in stats)
             {
                 Stats.Add(item);
-            }
-            foreach (GachaLogItemEx item in items.Where(x => x.RankType is 5 or 4).Take(60))
-            {
-                RecentFiveStars.Add(item);
+                Categories.Add(new GachaCategoryGroup
+                {
+                    Stats = item,
+                    RareItems = GetRareItems(item),
+                });
             }
             HasData = Stats.Count > 0;
-            EmptyText = HasData ? "" : "No records for this UID yet.";
+            EmptyText = HasData ? "" : Localization.Get("Avalonia_Gacha_NoRecordsForUid");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Load gacha stats");
             Error = ex.Message;
         }
+    }
+
+
+    private static IReadOnlyList<GachaLogItemEx> GetRareItems(GachaTypeStats stats)
+    {
+        return stats.List_5.Concat(stats.List_4)
+                    .Where(x => x.Id > 0)
+                    .GroupBy(x => x.ItemId)
+                    .Select(group =>
+                    {
+                        GachaLogItemEx item = group.OrderByDescending(x => x.Time).First();
+                        item.ItemCount = group.Count();
+                        return item;
+                    })
+                    .OrderByDescending(x => x.RankType)
+                    .ThenByDescending(x => x.Time)
+                    .ToList();
     }
 
 
@@ -177,12 +211,13 @@ public partial class GachaViewModel : ObservableObject
             return;
         }
         Error = null;
-        string? url = SelectedUid is > 0 ? _service.GetGachaLogUrlByUid(SelectedUid.Value) : null;
-        url ??= TryGetWebCacheUrl();
+        GachaCacheResult? cache = await FindGameCacheAsync(force: true);
+        string? url = cache?.Url;
+        url ??= SelectedUid is > 0 ? _service.GetGachaLogUrlByUid(SelectedUid.Value) : null;
         if (string.IsNullOrWhiteSpace(url))
         {
-            url = await DialogHelper.ShowInputAsync("Gacha log URL",
-                "Paste the full gacha history URL copied from the game's history page (the URL contains authkey).",
+            url = await DialogHelper.ShowInputAsync(Localization.Get("Avalonia_Gacha_UrlDialogTitle"),
+                Localization.Get("Avalonia_Gacha_UrlDialogMessage"),
                 "");
         }
         if (string.IsNullOrWhiteSpace(url))
@@ -194,14 +229,32 @@ public partial class GachaViewModel : ObservableObject
 
 
     [RelayCommand]
+    private async Task ImportFromGameCacheAsync()
+    {
+        if (_service is null || IsBusy)
+        {
+            return;
+        }
+        GachaCacheResult? cache = await FindGameCacheAsync(force: true);
+        if (cache is null)
+        {
+            await DialogHelper.ShowMessageAsync(Localization.Get("Avalonia_Gacha_NoLinkTitle"),
+                Localization.Get("Avalonia_Gacha_NoLinkMessage"));
+            return;
+        }
+        await FetchAsync(cache.Url, false);
+    }
+
+
+    [RelayCommand]
     private async Task ImportUrlAsync()
     {
         if (_service is null || IsBusy)
         {
             return;
         }
-        string? url = await DialogHelper.ShowInputAsync("Import gacha log URL",
-            "Paste the full gacha history URL. Existing records are kept and only newer records are fetched.");
+        string? url = await DialogHelper.ShowInputAsync(Localization.Get("Avalonia_Gacha_ImportUrlTitle"),
+            Localization.Get("Avalonia_Gacha_ImportUrlMessage"));
         if (!string.IsNullOrWhiteSpace(url))
         {
             await FetchAsync(url.Trim(), false);
@@ -216,9 +269,10 @@ public partial class GachaViewModel : ObservableObject
         {
             return;
         }
-        string? url = TryGetWebCacheUrl()
-                      ?? await DialogHelper.ShowInputAsync("Import all gacha records",
-                          "Paste the full gacha history URL. All pages will be fetched again.");
+        GachaCacheResult? cache = await FindGameCacheAsync(force: true);
+        string? url = cache?.Url
+                      ?? await DialogHelper.ShowInputAsync(Localization.Get("Avalonia_Gacha_ImportAllTitle"),
+                          Localization.Get("Avalonia_Gacha_ImportAllMessage"));
         if (!string.IsNullOrWhiteSpace(url))
         {
             await FetchAsync(url.Trim(), true);
@@ -226,24 +280,44 @@ public partial class GachaViewModel : ObservableObject
     }
 
 
-    private string? TryGetWebCacheUrl()
+    private async Task<GachaCacheResult?> FindGameCacheAsync(bool force)
     {
-        try
-        {
-            if (_gameId is null)
-            {
-                return null;
-            }
-            string? installPath = GameLauncherService.GetGameInstallPath(_gameId);
-            if (string.IsNullOrWhiteSpace(installPath))
-            {
-                return null;
-            }
-            return GachaLogClient.GetGachaUrlFromWebCache(_gameId.GameBiz, installPath);
-        }
-        catch
+        if (_gameId is null)
         {
             return null;
+        }
+        if (!force && _lastCacheResult is not null)
+        {
+            return _lastCacheResult;
+        }
+        int version = ++_cacheScanVersion;
+        CacheStatusText = Localization.Get("Avalonia_Gacha_ScanningCache");
+        GachaCacheResult? result = await Task.Run(() => _cacheService.Find(_gameId.GameBiz));
+        if (version != _cacheScanVersion)
+        {
+            return result;
+        }
+        _lastCacheResult = result;
+        HasGameCache = result is not null;
+        CacheStatusText = result is null
+            ? Localization.Get("Avalonia_Gacha_NoCacheLink")
+            : Localization.Format("Avalonia_Gacha_CacheReadyFormat", result.LastWriteTime);
+        return result;
+    }
+
+
+    private async Task RefreshCacheStatusAsync()
+    {
+        _lastCacheResult = null;
+        try
+        {
+            await FindGameCacheAsync(force: true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Failed to scan the game web cache");
+            HasGameCache = false;
+            CacheStatusText = Localization.Get("Avalonia_Gacha_CacheReadFailed");
         }
     }
 
@@ -254,16 +328,17 @@ public partial class GachaViewModel : ObservableObject
         {
             return;
         }
+        url = GachaLogClient.NormalizeGachaUrl(url);
         IsBusy = true;
         Error = null;
-        ProgressText = "Starting…";
+        ProgressText = Localization.Get("Avalonia_Gacha_Starting");
         _cts?.Cancel();
         _cts = new CancellationTokenSource();
         try
         {
             Progress<string> progress = new(x => ProgressText = x);
             long uid = await _service.GetGachaLogAsync(url, all, AppConfig.GachaLanguage, progress, _cts.Token);
-            ProgressText = uid > 0 ? "Done" : "No gacha records found for this URL.";
+            ProgressText = Localization.Get(uid > 0 ? "Avalonia_Gacha_Done" : "Avalonia_Gacha_NoRecordsForUrl");
             LoadUids();
             if (uid > 0)
             {
@@ -276,7 +351,7 @@ public partial class GachaViewModel : ObservableObject
         }
         catch (OperationCanceledException)
         {
-            ProgressText = "Cancelled";
+            ProgressText = Localization.Get("Avalonia_Gacha_Cancelled");
         }
         catch (Exception ex)
         {
@@ -305,7 +380,7 @@ public partial class GachaViewModel : ObservableObject
         {
             return;
         }
-        string? file = await DialogHelper.SaveFileAsync("Export gacha records",
+        string? file = await DialogHelper.SaveFileAsync(Localization.Get("Avalonia_Gacha_ExportTitle"),
             $"StarwardGacha_{SelectedUid}_{DateTime.Now:yyyyMMdd_HHmmss}.json", "*.json");
         if (string.IsNullOrWhiteSpace(file))
         {
@@ -314,7 +389,7 @@ public partial class GachaViewModel : ObservableObject
         try
         {
             await _service.ExportGachaLogAsync(SelectedUid.Value, file, "json");
-            ProgressText = $"Exported to {file}";
+            ProgressText = Localization.Format("Avalonia_Gacha_ExportedFormat", file);
         }
         catch (Exception ex)
         {
@@ -330,7 +405,7 @@ public partial class GachaViewModel : ObservableObject
         {
             return;
         }
-        string? file = await DialogHelper.PickFileAsync("Import gacha records", null, "*.json");
+        string? file = await DialogHelper.PickFileAsync(Localization.Get("Avalonia_Gacha_ImportFileTitle"), null, "*.json");
         if (string.IsNullOrWhiteSpace(file))
         {
             return;
@@ -340,13 +415,13 @@ public partial class GachaViewModel : ObservableObject
             long uid = _service.ImportGachaLog(file);
             if (uid > 0)
             {
-                ProgressText = $"Imported UID {uid}";
+                ProgressText = Localization.Format("Avalonia_Gacha_ImportedUidFormat", uid);
                 LoadUids();
                 SelectedUid = uid;
             }
             else
             {
-                Error = "The file could not be parsed as a Starward/UIGF gacha log.";
+                Error = Localization.Get("Avalonia_Gacha_InvalidFile");
             }
         }
         catch (Exception ex)
@@ -363,8 +438,8 @@ public partial class GachaViewModel : ObservableObject
         {
             return;
         }
-        bool ok = await DialogHelper.ShowConfirmAsync("Delete gacha records",
-            $"Delete all local gacha records of UID {SelectedUid}? This cannot be undone.");
+        bool ok = await DialogHelper.ShowConfirmAsync(Localization.Get("Avalonia_Gacha_DeleteTitle"),
+            Localization.Format("Avalonia_Gacha_DeleteMessageFormat", SelectedUid));
         if (ok)
         {
             _service.DeleteUid(SelectedUid.Value);

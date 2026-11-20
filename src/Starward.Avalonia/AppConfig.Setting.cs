@@ -245,6 +245,24 @@ public static partial class AppConfig
         set => SetValue(value);
     }
 
+    /// <summary>
+    /// 为游戏进程设置 MANGOHUD=1。
+    /// </summary>
+    public static bool CompatEnableMangoHud
+    {
+        get => GetValue<bool>();
+        set => SetValue(value);
+    }
+
+    /// <summary>
+    /// 优先使用 SDL 控制器输入（Proton 会设置 PROTON_PREFER_SDL）。
+    /// </summary>
+    public static bool CompatEnableSdlInput
+    {
+        get => GetValue<bool>();
+        set => SetValue(value);
+    }
+
     public static bool CompatAutoDetect
     {
         get => GetValue(true);
@@ -265,6 +283,81 @@ public static partial class AppConfig
     public static void SetCompatLayerId(GameBiz biz, string? value)
     {
         SetValue(value, $"compat_layer_{biz}");
+    }
+
+    public static bool GetCompatArgsFollowGlobal(GameBiz biz)
+    {
+        return GetValue(true, $"compat_args_follow_{biz}");
+    }
+
+    public static void SetCompatArgsFollowGlobal(GameBiz biz, bool value)
+    {
+        SetValue(value, $"compat_args_follow_{biz}");
+    }
+
+    public static string? GetCompatExtraArguments(GameBiz biz)
+    {
+        return GetValue<string>(default, $"compat_extra_args_{biz}");
+    }
+
+    public static void SetCompatExtraArguments(GameBiz biz, string? value)
+    {
+        SetValue(value, $"compat_extra_args_{biz}");
+    }
+
+    public static bool GetCompatMangoHudFollowGlobal(GameBiz biz)
+    {
+        return GetValue(true, $"compat_mangohud_follow_{biz}");
+    }
+
+    public static void SetCompatMangoHudFollowGlobal(GameBiz biz, bool value)
+    {
+        SetValue(value, $"compat_mangohud_follow_{biz}");
+    }
+
+    public static bool GetCompatMangoHud(GameBiz biz)
+    {
+        return GetValue<bool>(default, $"compat_mangohud_{biz}");
+    }
+
+    public static void SetCompatMangoHud(GameBiz biz, bool value)
+    {
+        SetValue(value, $"compat_mangohud_{biz}");
+    }
+
+    public static bool GetCompatSdlInputFollowGlobal(GameBiz biz)
+    {
+        return GetValue(true, $"compat_sdl_follow_{biz}");
+    }
+
+    public static void SetCompatSdlInputFollowGlobal(GameBiz biz, bool value)
+    {
+        SetValue(value, $"compat_sdl_follow_{biz}");
+    }
+
+    public static bool GetCompatSdlInput(GameBiz biz)
+    {
+        return GetValue<bool>(default, $"compat_sdl_{biz}");
+    }
+
+    public static void SetCompatSdlInput(GameBiz biz, bool value)
+    {
+        SetValue(value, $"compat_sdl_{biz}");
+    }
+
+    public static string? GetEffectiveCompatExtraArguments(GameBiz biz)
+    {
+        return GetCompatArgsFollowGlobal(biz) ? CompatExtraArguments : GetCompatExtraArguments(biz);
+    }
+
+    public static bool GetEffectiveCompatMangoHud(GameBiz biz)
+    {
+        return GetCompatMangoHudFollowGlobal(biz) ? CompatEnableMangoHud : GetCompatMangoHud(biz);
+    }
+
+    public static bool GetEffectiveCompatSdlInput(GameBiz biz)
+    {
+        return GetCompatSdlInputFollowGlobal(biz) ? CompatEnableSdlInput : GetCompatSdlInput(biz);
     }
 
     public static string? GetWinePrefix(GameBiz biz)

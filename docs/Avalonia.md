@@ -97,9 +97,20 @@ required. The launcher applies:
 - `WINEESYNC=1`
 - optional `WINEDLLOVERRIDES=winemenubuilder.exe=d`
 - extra command-line arguments configured in Settings
+- optional `MANGOHUD=1`
+- SDL input mode: `PROTON_PREFER_SDL=1` / `PROTON_USE_SDL=1` for Proton,
+  `SDL_JOYSTICK_HIDAPI=1` for Wine
 
 For Proton, the command is `proton run <game.exe> [arguments]`. For Wine it is
 `wine <game.exe> [arguments]`.
+
+### Global and per-game settings
+
+The compatibility layer, launch arguments, MangoHud and SDL input each have a
+global default. **Per-game settings** can override them for one game, or keep
+**Follow global** checked to inherit the global value. Layer scanning merges
+duplicate copies of the same build found in Steam, `compatibilitytools.d` and
+custom scan paths.
 
 ## Validation
 
@@ -115,18 +126,21 @@ dotnet run --project tests/Starward.Avalonia.Render/Starward.Avalonia.Render.csp
 ```
 
 Supported page arguments are `Launcher`, `Gacha`, `Screenshots`, `PlayTime`,
-`Settings`, and `Settings:<tab-index>`.
+`Settings`, `Settings:<tab-index>`, and `Launcher:Selector` (opens the game
+selector overlay).
 
 ## Implemented in the Avalonia port
 
-- Fluent dark UI, game selector and main navigation
+- Fluent dark UI matching the original, with a 56px icon rail, full-bleed launcher and game selector overlay
 - Configuration, portable mode and SQLite schema migrations v1–v21
 - Game installation detection, local version reading and update information
-- Linux Wine/Proton discovery, per-game selection and prefix launch
-- Gacha UID listing, statistics, new/all fetching, JSON import/export
+- Linux Wine/Proton discovery with duplicate merging, per-game layer/args/MangoHud/SDL settings and prefix launch
+- Gacha UID listing, per-banner statistics and rare drops, new/all fetching, JSON import/export
+- Automatic gacha-link discovery in the game's `webCaches` (including Wine/Proton prefixes), with manual URL paste as fallback
 - Screenshot scanning and preview
 - Play-time tracking and recent sessions
 - Database backup, logs, language selection and settings pages
+- Localized Avalonia UI through the shared `Starward.Language` resources; English and Simplified Chinese are complete, while other locales fall back to English for the new Avalonia strings
 
 ## Not yet ported
 
@@ -140,8 +154,6 @@ not available in the Avalonia project yet:
 - Screen capture, HDR/AVIF/WebP conversion and screenshot batch tools
 - System tray, URL protocol, background service and update/setup flows
 - Full gacha banner/detail views and UIGF4 import
-- Localization of the new Avalonia UI labels (game data is already localized)
-
 This list is deliberate: the Avalonia build is not presented as a byte-for-byte
 feature replacement before those components are ported.
 
@@ -161,8 +173,11 @@ Proton prefix may need its first-time setup completed before the game starts.
 **Gacha URL cannot be read from the web cache**
 
 Open the in-game wish/warp history page at least once so the authkey is written
-to the game cache. If the launcher still cannot read it, paste the full history
-URL manually.
+to the game cache, then press **Read cache** or **Update records**. Starward
+scans every `webCaches/**/Cache_Data` block of the selected game, including
+installs inside a Wine/Proton prefix and Steam libraries. Cache entries expire
+quickly, so a fresh visit to the history page may be required. If the launcher
+still cannot read it, paste the full history URL manually.
 
 **Proton works in Steam but not here**
 

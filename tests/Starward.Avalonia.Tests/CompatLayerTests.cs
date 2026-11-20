@@ -130,4 +130,93 @@ public class CompatLayerTests
         }
     }
 
+
+    [Fact]
+    public void DuplicateBuildsAreMergedAndOldIdRemainsSelectable()
+    {
+        CompatLayer custom = new()
+        {
+            Id = "/custom/GE-Proton9-20/proton",
+            Name = "GE-Proton9-20",
+            Kind = CompatLayerKind.Proton,
+            ExecutablePath = "/custom/GE-Proton9-20/proton",
+            Version = "GE-Proton9-20",
+            Source = "custom",
+        };
+        CompatLayer steam = new()
+        {
+            Id = "/steam/compatibilitytools.d/GE-Proton9-20/proton",
+            Name = "GE-Proton9-20",
+            Kind = CompatLayerKind.Proton,
+            ExecutablePath = "/steam/compatibilitytools.d/GE-Proton9-20/proton",
+            SteamRoot = "/steam",
+            Version = "GE-Proton9-20",
+            Source = "compatibilitytools.d",
+        };
+
+        IReadOnlyList<CompatLayer> layers = CompatLayerService.DeduplicateLayers([custom, steam]);
+
+        CompatLayer layer = Assert.Single(layers);
+        Assert.Equal(steam.Id, layer.Id);
+        Assert.True(layer.MatchesId(custom.Id));
+    }
+
+
+    [Fact]
+    public void MangoHudAndSdlInputSetProtonEnvironment()
+    {
+        CompatLayer layer = new()
+        {
+            Id = "/games/GE-Proton/proton",
+            Name = "GE-Proton",
+            Kind = CompatLayerKind.Proton,
+            ExecutablePath = "/games/GE-Proton/proton",
+            Source = "test",
+        };
+
+        ProcessStartInfo info = CompatLayerService.CreateStartInfo(
+            layer,
+            "/games/Genshin/GenshinImpact.exe",
+            "",
+            "/games/Genshin",
+            "/prefixes/hk4e_global",
+            "",
+            false,
+            null,
+            enableMangoHud: true,
+            enableSdlInput: true);
+
+        Assert.Equal("1", info.Environment["MANGOHUD"]);
+        Assert.Equal("1", info.Environment["PROTON_PREFER_SDL"]);
+        Assert.Equal("1", info.Environment["PROTON_USE_SDL"]);
+        Assert.False(info.Environment.ContainsKey("SDL_JOYSTICK_HIDAPI"));
+    }
+
+
+    [Fact]
+    public void SdlInputUsesHidapiForWine()
+    {
+        CompatLayer layer = new()
+        {
+            Id = "/usr/bin/wine",
+            Name = "System Wine",
+            Kind = CompatLayerKind.Wine,
+            ExecutablePath = "/usr/bin/wine",
+            Source = "test",
+        };
+
+        ProcessStartInfo info = CompatLayerService.CreateStartInfo(
+            layer,
+            "/games/StarRail/StarRail.exe",
+            "",
+            "/games/StarRail",
+            "/prefixes/hkrpg_global",
+            "",
+            false,
+            enableSdlInput: true);
+
+        Assert.Equal("1", info.Environment["SDL_JOYSTICK_HIDAPI"]);
+        Assert.False(info.Environment.ContainsKey("PROTON_PREFER_SDL"));
+    }
+
 }

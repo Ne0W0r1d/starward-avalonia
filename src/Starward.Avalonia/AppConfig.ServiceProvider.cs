@@ -68,6 +68,7 @@ public static partial class AppConfig
             sc.AddSingleton<StarRailGachaService>();
             sc.AddSingleton<ZZZGachaService>();
             sc.AddSingleton<GachaServiceFactory>();
+            sc.AddSingleton<GachaCacheService>();
 
             sc.AddSingleton<Features.ViewHost.MainWindowViewModel>();
             sc.AddTransient<Features.ViewHost.LauncherViewModel>();

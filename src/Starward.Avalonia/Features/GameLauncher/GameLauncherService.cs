@@ -233,12 +233,12 @@ public sealed partial class GameLauncherService
             string? folder = GetGameInstallPath(gameId);
             if (string.IsNullOrWhiteSpace(folder))
             {
-                throw new DirectoryNotFoundException("Game install path is not configured.");
+                throw new DirectoryNotFoundException(Localization.Get("Avalonia_Error_GamePathNotConfigured"));
             }
             exe = Path.Combine(folder, await GetGameExeNameAsync(gameId));
             if (!File.Exists(exe))
             {
-                throw new FileNotFoundException("Game executable not found.", exe);
+                throw new FileNotFoundException(Localization.Get("Avalonia_Error_GameExeMissing"), exe);
             }
         }
 
@@ -256,9 +256,9 @@ public sealed partial class GameLauncherService
         if (OperatingSystem.IsLinux())
         {
             CompatLayer layer = await _compatLayerService.GetSelectedLayerAsync(gameId.GameBiz)
-                                ?? throw new InvalidOperationException("No Wine or Proton compatibility layer was found. Install Wine/Proton or configure a path in Settings → Linux compatibility.");
+                                ?? throw new InvalidOperationException(Localization.Get("Avalonia_Error_NoCompatLayer"));
             string prefix = _compatLayerService.GetPrefixPath(gameId.GameBiz);
-            info = _compatLayerService.CreateStartInfo(layer, exe, argument, Path.GetDirectoryName(exe)!, prefix);
+            info = _compatLayerService.CreateStartInfo(layer, exe, argument, Path.GetDirectoryName(exe)!, prefix, gameId.GameBiz);
             _logger.LogInformation("Start game with {layer} ({kind})\r\npath: {exe}\r\narg: {arg}\r\nprefix: {prefix}",
                                    layer.DisplayName, layer.KindText, exe, argument, prefix);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Starward.Features.Compatibility;
@@ -36,6 +37,16 @@ public sealed class CompatLayer
     public string DisplayName => string.IsNullOrWhiteSpace(Version) ? Name : $"{Name}  ({Version})";
 
     public string SourceText => Source;
+
+    /// <summary>
+    /// 去重时被合并到当前条目的其它可执行文件 ID，用于兼容旧配置。
+    /// </summary>
+    public HashSet<string> AliasIds { get; } = new(StringComparer.Ordinal);
+
+    public bool MatchesId(string? id)
+    {
+        return !string.IsNullOrWhiteSpace(id) && (id == Id || AliasIds.Contains(id));
+    }
 
 
     public override string ToString() => DisplayName;

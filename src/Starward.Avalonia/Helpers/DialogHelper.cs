@@ -21,7 +21,7 @@ public static class DialogHelper
         Window window = CreateWindow(title, 420);
         StackPanel panel = new() { Spacing = 18, Margin = new Thickness(24) };
         panel.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap, Foreground = Brushes.White });
-        Button ok = new() { Content = "OK", HorizontalAlignment = HorizontalAlignment.Right, Classes = { "cta" } };
+        Button ok = new() { Content = Localization.Get("SelectDirectoryPage_OK"), HorizontalAlignment = HorizontalAlignment.Right, Classes = { "cta" } };
         ok.Click += (_, _) => window.Close();
         panel.Children.Add(ok);
         window.Content = panel;
@@ -49,9 +49,9 @@ public static class DialogHelper
             Spacing = 8,
         };
         bool result = false;
-        Button cancel = new() { Content = "Cancel" };
+        Button cancel = new() { Content = Localization.Get("Common_Cancel") };
         cancel.Click += (_, _) => window.Close();
-        Button ok = new() { Content = "OK", Classes = { "cta" } };
+        Button ok = new() { Content = Localization.Get("SelectDirectoryPage_OK"), Classes = { "cta" } };
         ok.Click += (_, _) => { result = true; window.Close(); };
         buttons.Children.Add(cancel);
         buttons.Children.Add(ok);
@@ -84,9 +84,9 @@ public static class DialogHelper
             Spacing = 8,
         };
         string? result = null;
-        Button cancel = new() { Content = "Cancel" };
+        Button cancel = new() { Content = Localization.Get("Common_Cancel") };
         cancel.Click += (_, _) => window.Close();
-        Button ok = new() { Content = "OK", Classes = { "cta" } };
+        Button ok = new() { Content = Localization.Get("SelectDirectoryPage_OK"), Classes = { "cta" } };
         ok.Click += (_, _) => { result = textBox.Text; window.Close(); };
         buttons.Children.Add(cancel);
         buttons.Children.Add(ok);
@@ -144,7 +144,7 @@ public static class DialogHelper
         System.Collections.Generic.List<FilePickerFileType> types = new();
         if (patterns.Length > 0)
         {
-            types.Add(new FilePickerFileType("Files") { Patterns = patterns });
+            types.Add(new FilePickerFileType(Localization.Get("Avalonia_Dialog_Files")) { Patterns = patterns });
         }
         var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {

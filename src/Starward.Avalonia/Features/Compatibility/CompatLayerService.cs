@@ -49,11 +49,7 @@ public sealed class CompatLayerService
                 return _cachedLayers;
             }
         }
-        List<CompatLayer> layers = await Task.Run(DetectInternal);
-        layers = layers.DistinctBy(x => x.Id)
-                       .OrderBy(x => x.IsProton ? 0 : 1)
-                       .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
-                       .ToList();
+        List<CompatLayer> layers = DeduplicateLayers(await Task.Run(DetectInternal)).ToList();
         lock (_lock)
         {
             _cachedLayers = layers;
@@ -67,8 +63,70 @@ public sealed class CompatLayerService
     {
         IReadOnlyList<CompatLayer> layers = await DetectAsync(forceRefresh);
         string? id = AppConfig.GetCompatLayerId(biz) ?? AppConfig.CompatLayerId;
-        CompatLayer? layer = layers.FirstOrDefault(x => x.Id == id);
+        CompatLayer? layer = layers.FirstOrDefault(x => x.MatchesId(id));
         return layer ?? layers.FirstOrDefault(x => x.IsProton) ?? layers.FirstOrDefault();
+    }
+
+
+    /// <summary>
+    /// 同一个 Proton/Wine 构建可能同时出现在 Steam 库、compatibilitytools.d
+    /// 和用户自定义扫描路径中。按构建名称和版本合并，同时保留旧 ID 作为别名。
+    /// </summary>
+    public static IReadOnlyList<CompatLayer> DeduplicateLayers(IEnumerable<CompatLayer> layers)
+    {
+        List<CompatLayer> result = new();
+        foreach (IGrouping<string, CompatLayer> group in layers.GroupBy(GetLayerIdentity))
+        {
+            List<CompatLayer> ordered = group
+                .OrderByDescending(GetLayerPreference)
+                .ThenBy(x => x.Id, StringComparer.Ordinal)
+                .ToList();
+            CompatLayer primary = ordered[0];
+            foreach (CompatLayer duplicate in ordered.Skip(1))
+            {
+                if (duplicate.Id != primary.Id)
+                {
+                    primary.AliasIds.Add(duplicate.Id);
+                }
+            }
+            result.Add(primary);
+        }
+        return result.OrderBy(x => x.IsProton ? 0 : 1)
+                     .ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(x => x.Version, StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(x => x.Id, StringComparer.Ordinal)
+                     .ToList();
+    }
+
+
+    private static string GetLayerIdentity(CompatLayer layer)
+    {
+        string name = layer.Name.Trim().ToLowerInvariant();
+        if (name.Length == 0)
+        {
+            return layer.Id;
+        }
+        string version = (layer.Version ?? "").Trim().ToLowerInvariant();
+        return $"{layer.Kind}|{name}|{version}";
+    }
+
+
+    private static int GetLayerPreference(CompatLayer layer)
+    {
+        int score = 0;
+        if (!string.IsNullOrWhiteSpace(layer.SteamRoot))
+        {
+            score += 8;
+        }
+        if (layer.Source is "Steam" or "compatibilitytools.d")
+        {
+            score += 4;
+        }
+        else if (layer.Source is "system" or "custom")
+        {
+            score += 1;
+        }
+        return score;
     }
 
 
@@ -84,7 +142,7 @@ public sealed class CompatLayerService
     }
 
 
-    public ProcessStartInfo CreateStartInfo(CompatLayer layer, string executable, string? arguments, string workingDirectory, string prefix)
+    public ProcessStartInfo CreateStartInfo(CompatLayer layer, string executable, string? arguments, string workingDirectory, string prefix, GameBiz biz)
     {
         Directory.CreateDirectory(prefix);
         string steamClientPath = layer.SteamRoot
@@ -95,9 +153,11 @@ public sealed class CompatLayerService
                                arguments,
                                workingDirectory,
                                prefix,
-                               AppConfig.CompatExtraArguments,
+                               AppConfig.GetEffectiveCompatExtraArguments(biz),
                                AppConfig.CompatDisableMenuBuilder,
-                               steamClientPath);
+                               steamClientPath,
+                               AppConfig.GetEffectiveCompatMangoHud(biz),
+                               AppConfig.GetEffectiveCompatSdlInput(biz));
     }
 
 
@@ -109,7 +169,9 @@ public sealed class CompatLayerService
         string prefix,
         string? extraArguments,
         bool disableMenuBuilder,
-        string? steamClientPath = null)
+        string? steamClientPath = null,
+        bool enableMangoHud = false,
+        bool enableSdlInput = false)
     {
         ProcessStartInfo psi = new()
         {
@@ -152,6 +214,22 @@ public sealed class CompatLayerService
             foreach (string arg in SplitArguments(extraArguments))
             {
                 psi.ArgumentList.Add(arg);
+            }
+        }
+        if (enableMangoHud)
+        {
+            psi.Environment["MANGOHUD"] = "1";
+        }
+        if (enableSdlInput)
+        {
+            if (layer.IsProton)
+            {
+                psi.Environment["PROTON_PREFER_SDL"] = "1";
+                psi.Environment["PROTON_USE_SDL"] = "1";
+            }
+            else
+            {
+                psi.Environment["SDL_JOYSTICK_HIDAPI"] = "1";
             }
         }
         return psi;

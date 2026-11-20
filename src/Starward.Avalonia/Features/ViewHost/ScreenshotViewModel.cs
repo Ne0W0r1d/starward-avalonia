@@ -88,7 +88,9 @@ public partial class ScreenshotViewModel : ObservableObject
             {
                 Screenshots.Add(item);
             }
-            StatusText = list.Count == 0 ? "No screenshots found." : $"{list.Count} screenshots";
+            StatusText = list.Count == 0
+                ? Localization.Get("Avalonia_Screenshots_NoneFound")
+                : Localization.Format("Avalonia_Screenshots_CountFormat", list.Count);
             SelectedScreenshot = Screenshots.FirstOrDefault();
         }
         catch (Exception ex)
@@ -136,7 +138,7 @@ public partial class ScreenshotViewModel : ObservableObject
         {
             return;
         }
-        string? folder = await DialogHelper.PickFolderAsync("Select an additional screenshot folder");
+        string? folder = await DialogHelper.PickFolderAsync(Localization.Get("Avalonia_Screenshots_SelectFolderTitle"));
         if (!string.IsNullOrWhiteSpace(folder))
         {
             AppConfig.SetExternalScreenshotFolder(_gameId.GameBiz, folder);

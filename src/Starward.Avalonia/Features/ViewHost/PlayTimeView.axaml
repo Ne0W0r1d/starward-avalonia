@@ -4,29 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="using:Starward.Features.ViewHost"
              xmlns:pt="using:Starward.Features.PlayTime"
+             xmlns:i18n="using:Starward.I18n"
              x:Class="Starward.Features.ViewHost.PlayTimeView"
              x:DataType="local:PlayTimeViewModel"
              mc:Ignorable="d">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid Margin="24,0,24,20" RowDefinitions="Auto,*">
         <Border Grid.Row="0" Classes="card" Padding="20,16">
             <Grid ColumnDefinitions="*,Auto">
                 <StackPanel Spacing="4">
                     <TextBlock Text="{Binding CurrentGameName}" Classes="secondary" />
                     <TextBlock Text="{Binding CurrentTotalText}" FontSize="34" FontWeight="SemiBold" />
-                    <TextBlock Text="Total play time" Classes="tertiary" />
+                    <TextBlock Text="{i18n:Tr Key=Avalonia_PlayTime_Total}" Classes="tertiary" />
                 </StackPanel>
                 <Button Grid.Column="1"
                         Classes="cta"
                         VerticalAlignment="Center"
                         Command="{Binding RefreshCommand}"
-                        Content="Refresh" />
+                        Content="{i18n:Tr Key=Common_Refresh}" />
             </Grid>
         </Border>
 
         <ScrollViewer Grid.Row="1" Margin="0,16,0,0">
             <StackPanel Spacing="16">
-                <TextBlock Text="All games" Classes="h2" />
+                <TextBlock Text="{i18n:Tr Key=Avalonia_PlayTime_AllGames}" Classes="h2" />
                 <ItemsControl ItemsSource="{Binding Totals}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -56,7 +57,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <TextBlock Text="Recent sessions" Classes="h2" Margin="0,6,0,0" />
+                <TextBlock Text="{i18n:Tr Key=Avalonia_PlayTime_RecentSessions}" Classes="h2" Margin="0,6,0,0" />
                 <Border Classes="card" Padding="8">
                     <ItemsControl ItemsSource="{Binding Sessions}">
                         <ItemsControl.ItemTemplate>
@@ -77,7 +78,7 @@
                     </ItemsControl>
                 </Border>
                 <TextBlock Classes="tertiary"
-                           Text="Sessions are recorded by the background play-time monitor started together with the game process." />
+                           Text="{i18n:Tr Key=Avalonia_PlayTime_SessionsNote}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

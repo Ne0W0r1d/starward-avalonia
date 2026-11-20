@@ -35,7 +35,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     private GameBizIcon? _initialGame;
 
-
     public MainWindowViewModel()
     {
         _logger = AppConfig.GetLogger<MainWindowViewModel>();
@@ -79,7 +78,7 @@ public partial class MainWindowViewModel : ObservableObject
     public partial object? CurrentPage { get; set; }
 
     [ObservableProperty]
-    public partial string PageTitle { get; set; } = "Launcher";
+    public partial string PageTitle { get; set; } = Localization.Get("MainPage_Launcer");
 
     [ObservableProperty]
     public partial bool IsLauncherActive { get; set; }
@@ -104,6 +103,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsGameSelectorOpen { get; set; }
 
     public bool ShowGacha => CurrentGame is not null && GameFeatureConfig.FromGameId(CurrentGame.GameId).SupportGacha;
 
@@ -154,6 +156,10 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
         AppConfig.CurrentGameBiz = value.GameBiz;
+        foreach (GameBizIcon game in Games)
+        {
+            game.IsSelected = ReferenceEquals(game, value);
+        }
         OnPropertyChanged(nameof(ShowGacha));
         OnPropertyChanged(nameof(CurrentGameName));
         OnPropertyChanged(nameof(CurrentServerName));
@@ -188,11 +194,11 @@ public partial class MainWindowViewModel : ObservableObject
         };
         PageTitle = page switch
         {
-            "Gacha" => "Gacha records",
-            "Screenshots" => "Screenshots",
-            "PlayTime" => "Play time",
-            "Settings" => "Settings",
-            _ => "Launcher",
+            "Gacha" => Localization.Get("Avalonia_Nav_GachaRecords"),
+            "Screenshots" => Localization.Get("Avalonia_Nav_Screenshots"),
+            "PlayTime" => Localization.Get("LauncherPage_PlayTime"),
+            "Settings" => Localization.Get("Avalonia_Nav_Settings"),
+            _ => Localization.Get("MainPage_Launcer"),
         };
         switch (page)
         {
@@ -222,6 +228,21 @@ public partial class MainWindowViewModel : ObservableObject
         {
             CurrentGame = game;
         }
+        IsGameSelectorOpen = false;
+    }
+
+
+    [RelayCommand]
+    private void ToggleGameSelector()
+    {
+        IsGameSelectorOpen = !IsGameSelectorOpen;
+    }
+
+
+    [RelayCommand]
+    private void CloseGameSelector()
+    {
+        IsGameSelectorOpen = false;
     }
 
 
@@ -239,9 +260,19 @@ public partial class MainWindowViewModel : ObservableObject
             {
                 return;
             }
-            if (!string.IsNullOrWhiteSpace(info.Display?.Background?.Url))
+            string? backgroundUrl = info.Display?.Background?.Url;
+            if (string.IsNullOrWhiteSpace(backgroundUrl))
             {
-                BackgroundImage = await ImageHelper.LoadRemoteAsync(info.Display.Background.Url);
+                GameBackgroundInfo? backgrounds = await _hoYoPlayService.GetGameBackgroundAsync(game.GameId);
+                backgroundUrl = backgrounds?.Backgrounds?
+                                              .FirstOrDefault(x => x.Type != GameBackground.BACKGROUND_TYPE_VIDEO
+                                                                   && !string.IsNullOrWhiteSpace(x.Background?.Url))?
+                                              .Background?.Url;
+            }
+            backgroundUrl ??= info.Display?.Thumbnail?.Url;
+            if (!string.IsNullOrWhiteSpace(backgroundUrl))
+            {
+                BackgroundImage = await ImageHelper.LoadRemoteAsync(backgroundUrl);
             }
             if (!string.IsNullOrWhiteSpace(info.Display?.Logo?.Url))
             {

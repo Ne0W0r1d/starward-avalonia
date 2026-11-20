@@ -24,6 +24,9 @@ public partial class GameBizIcon : ObservableObject
 
     public string IconKey { get; }
 
+    [ObservableProperty]
+    public partial bool IsSelected { get; set; }
+
 
     public GameBizIcon(GameBiz biz)
     {

@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="using:Starward.Features.ViewHost"
         xmlns:gl="using:Starward.Features.GameLauncher"
+        xmlns:i18n="using:Starward.I18n"
         x:Class="Starward.Features.ViewHost.MainWindow"
         x:DataType="local:MainWindowViewModel"
         mc:Ignorable="d"
@@ -36,156 +37,207 @@
     <Grid>
         <Image Source="{Binding BackgroundImage}"
                Stretch="UniformToFill"
-               Opacity="0.55"
+               IsHitTestVisible="False"
                RenderOptions.BitmapInterpolationMode="HighQuality" />
-        <Border>
+
+        <Border IsHitTestVisible="False">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-                    <GradientStop Offset="0" Color="#F21B1B1F" />
-                    <GradientStop Offset="0.45" Color="#B81B1B1F" />
-                    <GradientStop Offset="1" Color="#E61B1B1F" />
+                    <GradientStop Offset="0" Color="#A61A1A20" />
+                    <GradientStop Offset="0.45" Color="#2E1A1A20" />
+                    <GradientStop Offset="1" Color="#731A1A20" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Border IsHitTestVisible="False">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,30%">
+                    <GradientStop Offset="0" Color="#A6101014" />
+                    <GradientStop Offset="1" Color="#00101014" />
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
 
-        <Grid ColumnDefinitions="76,*">
-            <!-- Sidebar -->
-            <Border Grid.Column="0" Background="#D91B1B1F">
-                <StackPanel Margin="0,18,0,16" Spacing="2">
-                    <Border Width="44"
-                            Height="44"
-                            Margin="0,0,0,20"
+        <Grid ColumnDefinitions="56,*">
+            <!-- Compact navigation rail, matching the original NavigationView pane. -->
+            <Border Grid.Column="0"
+                    Background="#B31B1B1F"
+                    BorderBrush="#1FFFFFFF"
+                    BorderThickness="0,0,1,0">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <Button Grid.Row="0"
+                            Classes="railGame"
                             HorizontalAlignment="Center"
-                            CornerRadius="10"
-                            ClipToBounds="True">
-                        <Image Source="{Binding CurrentGame.GameIcon}" Stretch="UniformToFill" />
-                    </Border>
-
-                    <Button Classes="nav"
-                            Classes.active="{Binding IsLauncherActive}"
-                            Command="{Binding NavigateCommand}"
-                            CommandParameter="Launcher"
-                            ToolTip.Tip="Launcher">
-                        <Path Width="21"
-                              Height="21"
-                              Stretch="Uniform"
-                              Fill="#E6FFFFFF"
-                              Data="M12 3 2 12h3v8h5v-6h4v6h5v-8h3L12 3z" />
+                            Margin="0,12,0,0"
+                            Command="{Binding ToggleGameSelectorCommand}"
+                            ToolTip.Tip="{i18n:Tr Key=GameSelector_ClickToSelectOrSwitchGame}">
+                        <Grid Width="40" Height="40">
+                            <Border CornerRadius="8" ClipToBounds="True">
+                                <Image Source="{Binding CurrentGame.GameIcon}" Stretch="UniformToFill" />
+                            </Border>
+                            <Image Width="18"
+                                   Height="18"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   Source="{Binding CurrentGame.ServerIcon}" />
+                        </Grid>
                     </Button>
 
-                    <Button Classes="nav"
-                            Classes.active="{Binding IsGachaActive}"
-                            Command="{Binding NavigateCommand}"
-                            CommandParameter="Gacha"
-                            IsVisible="{Binding ShowGacha}"
-                            ToolTip.Tip="Gacha records">
-                        <Path Width="21"
-                              Height="21"
-                              Stretch="Uniform"
-                              Fill="#E6FFFFFF"
-                              Data="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                    </Button>
+                    <StackPanel Grid.Row="1"
+                                Margin="0,14,0,0"
+                                Spacing="2"
+                                VerticalAlignment="Top">
+                        <Button Classes="rail"
+                                Classes.active="{Binding IsLauncherActive}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="Launcher"
+                                ToolTip.Tip="{i18n:Tr Key=MainPage_Launcer}">
+                            <Path Width="21"
+                                  Height="21"
+                                  Stretch="Uniform"
+                                  Fill="#E6FFFFFF"
+                                  Data="M12 3 2 12h3v8h5v-6h4v6h5v-8h3L12 3z" />
+                        </Button>
 
-                    <Button Classes="nav"
-                            Classes.active="{Binding IsScreenshotActive}"
-                            Command="{Binding NavigateCommand}"
-                            CommandParameter="Screenshots"
-                            ToolTip.Tip="Screenshots">
-                        <Path Width="21"
-                              Height="21"
-                              Stretch="Uniform"
-                              Fill="#E6FFFFFF"
-                              Data="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                    </Button>
+                        <Button Classes="rail"
+                                Classes.active="{Binding IsGachaActive}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="Gacha"
+                                IsVisible="{Binding ShowGacha}"
+                                ToolTip.Tip="{i18n:Tr Key=Avalonia_Nav_GachaRecords}">
+                            <Path Width="21"
+                                  Height="21"
+                                  Stretch="Uniform"
+                                  Fill="#E6FFFFFF"
+                                  Data="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </Button>
 
-                    <Button Classes="nav"
-                            Classes.active="{Binding IsPlayTimeActive}"
-                            Command="{Binding NavigateCommand}"
-                            CommandParameter="PlayTime"
-                            ToolTip.Tip="Play time">
-                        <Path Width="21"
-                              Height="21"
-                              Stretch="Uniform"
-                              Fill="#E6FFFFFF"
-                              Data="M11.99 2A10 10 0 1 0 12 22a10 10 0 0 0-.01-20zM12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                    </Button>
+                        <Button Classes="rail"
+                                Classes.active="{Binding IsScreenshotActive}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="Screenshots"
+                                ToolTip.Tip="{i18n:Tr Key=Avalonia_Nav_Screenshots}">
+                            <Path Width="21"
+                                  Height="21"
+                                  Stretch="Uniform"
+                                  Fill="#E6FFFFFF"
+                                  Data="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                        </Button>
 
-                    <Button Classes="nav"
+                        <Button Classes="rail"
+                                Classes.active="{Binding IsPlayTimeActive}"
+                                Command="{Binding NavigateCommand}"
+                                CommandParameter="PlayTime"
+                                ToolTip.Tip="{i18n:Tr Key=LauncherPage_PlayTime}">
+                            <Path Width="21"
+                                  Height="21"
+                                  Stretch="Uniform"
+                                  Fill="#E6FFFFFF"
+                                  Data="M11.99 2A10 10 0 1 0 12 22a10 10 0 0 0-.01-20zM12 20a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                        </Button>
+                    </StackPanel>
+
+                    <Button Grid.Row="2"
+                            Classes="rail"
                             Classes.active="{Binding IsSettingsActive}"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,12"
                             Command="{Binding NavigateCommand}"
                             CommandParameter="Settings"
-                            Margin="0,18,0,0"
-                            ToolTip.Tip="Settings">
+                            ToolTip.Tip="{i18n:Tr Key=Avalonia_Nav_Settings}">
                         <Path Width="21"
                               Height="21"
                               Stretch="Uniform"
                               Fill="#E6FFFFFF"
                               Data="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.5.5 0 0 0 .12-.61l-1.92-3.32a.5.5 0 0 0-.59-.22l-2.39.96a7.2 7.2 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.5.5 0 0 0-.59.22L2.74 8.87a.5.5 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.5.5 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.5.5 0 0 0-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z" />
                     </Button>
-                </StackPanel>
+                </Grid>
             </Border>
 
-            <!-- Main area -->
-            <Grid Grid.Column="1" RowDefinitions="64,*">
-                <Border Grid.Row="0"
-                        Padding="24,0"
-                        BorderBrush="{StaticResource DividerBrush}"
-                        BorderThickness="0,0,0,1">
-                    <Grid ColumnDefinitions="Auto,*,Auto">
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
-                            <ComboBox ItemsSource="{Binding Games}"
-                                      SelectedItem="{Binding CurrentGame, Mode=TwoWay}"
-                                      Width="270">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="gl:GameBizIcon">
-                                        <StackPanel Orientation="Horizontal" Spacing="10">
-                                            <Image Source="{Binding GameIcon}" Width="22" Height="22" />
-                                            <TextBlock Text="{Binding GameName}" VerticalAlignment="Center" />
+            <!-- Pages sit directly on the cover background, like the original frame. -->
+            <ContentControl Grid.Column="1"
+                            Margin="0,24,0,0"
+                            Content="{Binding CurrentPage}" />
+        </Grid>
+
+        <!-- Game selector overlay -->
+        <Grid IsVisible="{Binding IsGameSelectorOpen}">
+            <Border Background="#CC000000"
+                    PointerPressed="GameSelectorBackground_PointerPressed" />
+
+            <StackPanel Margin="68,56,40,40"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Spacing="24"
+                        MaxWidth="900">
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="{i18n:Tr Key=GameSelector_ClickToSelectOrSwitchGame}"
+                               FontSize="20"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Classes="overlayIcon"
+                            Command="{Binding CloseGameSelectorCommand}"
+                            ToolTip.Tip="{i18n:Tr Key=Common_Cancel}">
+                        <Path Width="16"
+                              Height="16"
+                              Stretch="Uniform"
+                              Fill="#E6FFFFFF"
+                              Data="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </Button>
+                </Grid>
+
+                <ScrollViewer MaxHeight="620">
+                    <ItemsControl ItemsSource="{Binding Games}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="gl:GameBizIcon">
+                                <Button Classes="gameTile"
+                                        Classes.selected="{Binding IsSelected}"
+                                        Margin="0,0,14,14"
+                                        Click="GameTile_Click">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                        <Border Width="52"
+                                                Height="52"
+                                                CornerRadius="10"
+                                                ClipToBounds="True"
+                                                VerticalAlignment="Center">
+                                            <Image Source="{Binding GameIcon}" Stretch="UniformToFill" />
+                                        </Border>
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="3"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding GameName}"
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="White"
+                                                       TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{Binding ServerName}"
-                                                       Classes="tertiary"
-                                                       VerticalAlignment="Center" />
+                                                       FontSize="12"
+                                                       Foreground="#B3FFFFFF" />
                                         </StackPanel>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
-
-                        <TextBlock Grid.Column="1"
-                                   Margin="26,0"
-                                   VerticalAlignment="Center"
-                                   FontSize="15"
-                                   FontWeight="SemiBold"
-                                   Foreground="#99FFFFFF"
-                                   Text="{Binding PageTitle}" />
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                            <Border Padding="10,5"
-                                    Background="#1FFFFFFF"
-                                    CornerRadius="20">
-                                <TextBlock Text="{Binding CompatHint}" Classes="tertiary" />
-                            </Border>
-                            <ProgressBar IsIndeterminate="True"
-                                         Width="64"
-                                         IsVisible="{Binding IsBusy}"
-                                         VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <Border Grid.Row="1" Padding="24,18,24,24" Background="#4D1B1B1F">
-                    <ContentControl Content="{Binding CurrentPage}" />
-                </Border>
-            </Grid>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
         </Grid>
 
         <!-- Fatal error overlay -->
         <Border IsVisible="{Binding HasFatalError}"
-                Background="#F21B1B1F"
+                Background="#F21A1A20"
                 Padding="48">
             <StackPanel VerticalAlignment="Center" Spacing="16" MaxWidth="720">
-                <TextBlock Text="Starward could not start" Classes="h1" />
+                <TextBlock Text="{i18n:Tr Key=Avalonia_Shell_StartupFailed}" Classes="h1" />
                 <TextBlock Text="{Binding FatalError}" Classes="secondary" />
-                <TextBlock Text="Check the log file in the Starward data folder." Classes="tertiary" />
+                <TextBlock Text="{i18n:Tr Key=Avalonia_Shell_CheckLog}" Classes="tertiary" />
             </StackPanel>
         </Border>
     </Grid>

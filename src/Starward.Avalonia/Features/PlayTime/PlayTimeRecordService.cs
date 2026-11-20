@@ -265,7 +265,7 @@ public sealed class PlayTimeRecordService
                 name = config?.ExeFileName;
             }
         }
-        return name ?? throw new ArgumentOutOfRangeException($"Unknown game {biz}");
+        return name ?? throw new ArgumentOutOfRangeException(Localization.Format("Avalonia_Error_UnknownGame", biz));
     }
 
 

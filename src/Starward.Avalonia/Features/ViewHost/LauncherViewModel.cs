@@ -67,7 +67,7 @@ public partial class LauncherViewModel : ObservableObject
     public partial string StatusText { get; set; } = "";
 
     [ObservableProperty]
-    public partial string PrimaryActionText { get; set; } = "Select install folder";
+    public partial string PrimaryActionText { get; set; } = Localization.Get("Avalonia_Launcher_SelectInstallFolder");
 
     [ObservableProperty]
     public partial string? Error { get; set; }
@@ -88,7 +88,7 @@ public partial class LauncherViewModel : ObservableObject
     public partial string? RunningTime { get; set; }
 
     [ObservableProperty]
-    public partial string CompatLayerText { get; set; } = "Not configured";
+    public partial string CompatLayerText { get; set; } = Localization.Get("Avalonia_Launcher_NotConfigured");
 
     [ObservableProperty]
     public partial string PrefixPath { get; set; } = "";
@@ -148,13 +148,13 @@ public partial class LauncherViewModel : ObservableObject
             bool exeExists = await _launcherService.IsGameExeExistsAsync(_gameId);
             IsInstalled = exeExists && local is not null;
             LocalVersionText = local?.ToString() ?? "-";
-            GameStateText = IsInstalled ? "Installed" : "Not installed";
-            PrimaryActionText = IsInstalled ? "Start game" : "Select install folder";
+            GameStateText = Localization.Get(IsInstalled ? "Avalonia_Launcher_Installed" : "Avalonia_Launcher_NotInstalled");
+            PrimaryActionText = Localization.Get(IsInstalled ? "LauncherPage_StartGame" : "Avalonia_Launcher_SelectInstallFolder");
             _gameProcess = await _launcherService.GetGameProcessAsync(_gameId);
             IsRunning = _gameProcess is not null;
             if (IsRunning)
             {
-                PrimaryActionText = "Game is running";
+                PrimaryActionText = Localization.Get("Avalonia_Launcher_GameRunning");
                 _runningTimer.Start();
                 UpdateRunningTime();
             }
@@ -166,24 +166,24 @@ public partial class LauncherViewModel : ObservableObject
             if (AppConfig.IsLinux)
             {
                 CompatLayer? layer = await _compatLayerService.GetSelectedLayerAsync(_gameId.GameBiz);
-                CompatLayerText = layer is null ? "Not detected" : layer.DisplayName;
+                CompatLayerText = layer is null ? Localization.Get("Avalonia_Launcher_NotDetected") : layer.DisplayName;
                 PrefixPath = _compatLayerService.GetPrefixPath(_gameId.GameBiz);
             }
             (Version? latest, Version? predownload) = await _launcherService.GetLatestGameVersionAsync(_gameId);
             LatestVersionText = latest?.ToString() ?? "-";
             IsUpdateAvailable = IsInstalled && latest is not null && local is not null && latest > local;
             StatusText = IsUpdateAvailable
-                ? $"Update available: {latest}"
-                : IsInstalled ? "Ready to launch" : "Choose the folder containing the game executable";
+                ? Localization.Format("Avalonia_Launcher_UpdateAvailableFormat", latest)
+                : Localization.Get(IsInstalled ? "Avalonia_Launcher_ReadyToLaunch" : "Avalonia_Launcher_ChooseGameFolder");
             if (IsRunning)
             {
-                StatusText = "Game is running";
+                StatusText = Localization.Get("Avalonia_Launcher_GameRunning");
             }
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Load launcher state {gameId}", _gameId.Id);
-            StatusText = "Unable to fetch game information";
+            StatusText = Localization.Get("Avalonia_Launcher_FetchFailed");
         }
         finally
         {
@@ -243,8 +243,8 @@ public partial class LauncherViewModel : ObservableObject
             if (process is not null)
             {
                 IsRunning = true;
-                PrimaryActionText = "Game is running";
-                StatusText = "Game is running";
+                PrimaryActionText = Localization.Get("Avalonia_Launcher_GameRunning");
+                StatusText = Localization.Get("Avalonia_Launcher_GameRunning");
                 _gameProcess = process;
                 _runningTimer.Start();
             }
@@ -270,14 +270,14 @@ public partial class LauncherViewModel : ObservableObject
         }
         try
         {
-            string? folder = await DialogHelper.PickFolderAsync("Select game installation folder", InstallPath);
+            string? folder = await DialogHelper.PickFolderAsync(Localization.Get("Avalonia_Launcher_SelectFolderTitle"), InstallPath);
             if (!string.IsNullOrWhiteSpace(folder))
             {
                 GameLauncherService.ChangeGameInstallPath(_gameId, folder);
                 await LoadAsync();
                 if (!IsInstalled)
                 {
-                    Error = "The selected folder does not contain the expected game executable.";
+                    Error = Localization.Get("Avalonia_Launcher_InvalidFolder");
                 }
             }
         }
@@ -326,7 +326,7 @@ public partial class LauncherViewModel : ObservableObject
             var list = await _launcherService.AutoDetectInstalledGamesAsync();
             if (list.Count == 0)
             {
-                Error = "No HoYoverse game installation was found in the scanned folders.";
+                Error = Localization.Get("Avalonia_Launcher_NoGameFound");
             }
             await LoadAsync();
         }
@@ -344,8 +344,8 @@ public partial class LauncherViewModel : ObservableObject
     [RelayCommand]
     private async Task ShowUpdateInfoAsync()
     {
-        await DialogHelper.ShowMessageAsync("Game updates",
-            "Version information is checked through the official HoYoPlay API. In-place download/install is not part of this Avalonia migration yet; use the official launcher or your Wine/Proton prefix tools to update the game files.");
+        await DialogHelper.ShowMessageAsync(Localization.Get("Avalonia_Launcher_GameUpdatesTitle"),
+            Localization.Get("Avalonia_Launcher_GameUpdatesMessage"));
     }
 
 }
