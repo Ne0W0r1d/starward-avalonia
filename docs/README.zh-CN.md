@@ -8,6 +8,7 @@
 
 > [!WARNING]
 > 本项目是 Starward 的下游分支，将移植到 Avalonia，并为 Linux 用户提供服务。
+
 > [!WARNING]
 > 本项目已存档，搞了半天发现为什么不如换框架重新造轮子……
 
