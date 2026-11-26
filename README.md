@@ -9,6 +9,9 @@ English | [简体中文](./docs/README.zh-CN.md) | [Tiếng Việt](./docs/READM
 > [!WARNING]
 > This project is downstream by Startward, It‘s will porting to avalonia and service for Linux User
 
+> [!WARNING]
+> The project is archived, because I think why not change the framework.
+
 
 Starward-avalonia is an open-source third-party launcher developed to address the shortcomings of HoYoPlay (miHoYo Launcher). It supports all PC games on of HoYoverse and aims to completely replace the official launcher for ur Linux PC and Steam Deck In addition to the basic functions of a launcher, I will also incorporate some additional features based on individual needs, such as:
 
@@ -25,8 +28,6 @@ More features are left for you to explore...
 First, your device needs to meet the following requirements:
 
 - A Linux distro can install .NET10
-- WebKit2GTK installed.
-
 
 Next, download the package for your CPU architecture from [GitHub Release](https://github.com/Ne0W0r1d/Starward-avalonia/releases). Extract it, then install it or run it and follow the prompts.
 
