@@ -8,7 +8,8 @@
 
 > [!WARNING]
 > 本项目是 Starward 的下游分支，将移植到 Avalonia，并为 Linux 用户提供服务。
-
+> [!WARNING]
+> 本项目已存档，搞了半天发现为什么不如换框架重新造轮子……
 
 Starward-Avalonia 是一个开源第三方启动器，旨在解决 HoYoPlay（米哈游启动器）的不足。它支持 HoYoverse 的所有 PC 游戏，目标是在 Linux PC 和 Steam Deck 上完全替代官方启动器。除了启动器的基本功能之外，我还会根据个人需求加入一些额外功能，例如：
 
